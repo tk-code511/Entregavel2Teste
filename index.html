@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algoritmos Fundamentais</title>
+    <title>Algoritmos Fundamentais - JS e Java</title>
+
     <style>
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
             --accent: #38bdf8;
             --accent-hover: #0284c7;
+            --java: #f97316;
+            --java-hover: #ea580c;
             --text-color: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
+            --code-bg: #020617;
         }
 
         * {
@@ -41,17 +45,23 @@
             color: var(--accent);
         }
 
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+            font-size: 0.9rem;
+        }
+
         .container {
             display: flex;
             flex: 1;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 2rem auto;
-            width: 90%;
+            width: 94%;
             gap: 2rem;
         }
 
         nav {
-            width: 250px;
+            width: 270px;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -66,6 +76,7 @@
             text-align: left;
             cursor: pointer;
             transition: all 0.2s ease;
+            font-size: 0.95rem;
         }
 
         .nav-btn:hover {
@@ -80,12 +91,27 @@
             border-color: var(--accent);
         }
 
+        .nav-btn.java {
+            border-left: 4px solid var(--java);
+        }
+
+        .nav-btn.java:hover {
+            border-color: var(--java);
+        }
+
+        .nav-btn.java.active {
+            background-color: var(--java);
+            border-color: var(--java);
+            color: #fff;
+        }
+
         main {
             flex: 1;
             background-color: var(--card-bg);
             border-radius: 12px;
             padding: 2rem;
             border: 1px solid var(--border-color);
+            min-width: 0;
         }
 
         .algo-panel {
@@ -94,6 +120,35 @@
 
         .algo-panel.active {
             display: block;
+        }
+
+        h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .language-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .js-badge {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .java-badge {
+            background: var(--java);
+            color: #fff;
         }
 
         .form-group {
@@ -138,6 +193,15 @@
             color: #fff;
         }
 
+        button.java-action {
+            background-color: var(--java);
+            color: #fff;
+        }
+
+        button.java-action:hover {
+            background-color: var(--java-hover);
+        }
+
         .result-box {
             margin-top: 1.5rem;
             padding: 1rem;
@@ -149,268 +213,1615 @@
             word-break: break-word;
         }
 
+        .java-result {
+            border-left-color: var(--java);
+        }
+
+        .code-title {
+            margin-top: 2rem;
+            margin-bottom: 0.7rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .legend span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
             }
+
             nav {
                 width: 100%;
+            }
+
+            main {
+                padding: 1.2rem;
             }
         }
     </style>
 </head>
+
 <body>
 
-    <header>
-        <h1>Algoritmos Fundamentais</h1>
-    </header>
+<header>
+    <h1>Algoritmos Fundamentais</h1>
+    <p class="subtitle">
+        Implementações em JavaScript e Java
+    </p>
+</header>
 
-    <div class="container">
-        <nav id="menu">
-            <button class="nav-btn active" onclick="showAlgo('contagem', this)">1. Contagem</button>
-            <button class="nav-btn" onclick="showAlgo('soma', this)">2. Soma de Conjunto</button>
-            <button class="nav-btn" onclick="showAlgo('fatorial', this)">3. Fatorial</button>
-            <button class="nav-btn" onclick="showAlgo('fibonacci', this)">4. Fibonacci</button>
-            <button class="nav-btn" onclick="showAlgo('mdc', this)">5. MDC</button>
-            <button class="nav-btn" onclick="showAlgo('primo', this)">6. Número Primo</button>
-            <button class="nav-btn" onclick="showAlgo('quicksort', this)">7. Ordenação (Quicksort)</button>
-        </nav>
+<div class="container">
 
-        <main>
-            <!-- Contagem (CORRIGIDO) -->
-            <div id="contagem" class="algo-panel active">
-                <h2>Contagem</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Analisa uma sequência de números e conta quais deles estão no intervalo entre o menor valor digitado e o número limite que você escolher.</p>
-                
-                <div class="form-group">
-                    <label>Número Limite (Teto):</label>
-                    <input type="number" id="contagem-limite" placeholder="Ex: 50">
-                </div>
-                
-                <div class="form-group">
-                    <label>Valores a serem avaliados (separados por vírgula):</label>
-                    <input type="text" id="contagem-input" placeholder="Ex: 10, 25, 60, 5, 80, 42">
-                </div>
-                
-                <button class="action-btn" onclick="calcContagem()">Contar e Filtrar</button>
-                <div id="contagem-result" class="result-box">Aguardando dados...</div>
+    <nav id="menu">
+
+        <!-- JAVASCRIPT -->
+        <button class="nav-btn active"
+                onclick="showAlgo('contagem-js', this)">
+            1. Contagem (JS)
+        </button>
+
+        <button class="nav-btn"
+                onclick="showAlgo('soma-js', this)">
+            2. Soma de Conjunto (JS)
+        </button>
+
+        <button class="nav-btn"
+                onclick="showAlgo('fatorial-js', this)">
+            3. Fatorial (JS)
+        </button>
+
+        <button class="nav-btn"
+                onclick="showAlgo('fibonacci-js', this)">
+            4. Fibonacci (JS)
+        </button>
+
+        <button class="nav-btn"
+                onclick="showAlgo('mdc-js', this)">
+            5. MDC (JS)
+        </button>
+
+        <button class="nav-btn"
+                onclick="showAlgo('primo-js', this)">
+            6. Número Primo (JS)
+        </button>
+
+        <button class="nav-btn"
+                onclick="showAlgo('quicksort-js', this)">
+            7. Ordenação - Quicksort (JS)
+        </button>
+
+
+        <!-- JAVA -->
+        <button class="nav-btn java"
+                onclick="showAlgo('contagem-java', this)">
+            8. Contagem (Java)
+        </button>
+
+        <button class="nav-btn java"
+                onclick="showAlgo('soma-java', this)">
+            9. Soma de Conjunto (Java)
+        </button>
+
+        <button class="nav-btn java"
+                onclick="showAlgo('fatorial-java', this)">
+            10. Fatorial (Java)
+        </button>
+
+        <button class="nav-btn java"
+                onclick="showAlgo('fibonacci-java', this)">
+            11. Fibonacci (Java)
+        </button>
+
+        <button class="nav-btn java"
+                onclick="showAlgo('mdc-java', this)">
+            12. MDC (Java)
+        </button>
+
+        <button class="nav-btn java"
+                onclick="showAlgo('primo-java', this)">
+            13. Número Primo (Java)
+        </button>
+
+        <button class="nav-btn java"
+                onclick="showAlgo('quicksort-java', this)">
+            14. Ordenação - Quicksort (Java)
+        </button>
+
+    </nav>
+
+
+    <main>
+
+        <!-- =====================================================
+             JAVASCRIPT
+        ====================================================== -->
+
+        <!-- 1 - CONTAGEM JS -->
+        <div id="contagem-js" class="algo-panel active">
+
+            <h2>
+                Contagem
+                <span class="language-badge js-badge">JS</span>
+            </h2>
+
+            <p class="description">
+                Analisa uma sequência e conta os números entre o menor
+                valor digitado e o limite escolhido.
+            </p>
+
+            <div class="form-group">
+                <label>Número Limite (Teto):</label>
+                <input type="number"
+                       id="contagem-limite"
+                       placeholder="Ex: 50">
             </div>
 
-            <!-- Soma -->
-            <div id="soma" class="algo-panel">
-                <h2>Soma de Conjunto</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Calcula o somatório de uma sequência de números.</p>
-                <div class="form-group">
-                    <label>Números (separados por vírgula):</label>
-                    <input type="text" id="soma-input" placeholder="Ex: 5, 10, 15, 20">
-                </div>
-                <button class="action-btn" onclick="calcSoma()">Calcular Soma</button>
-                <div id="soma-result" class="result-box">Aguardando dados...</div>
+            <div class="form-group">
+                <label>Valores separados por vírgula:</label>
+                <input type="text"
+                       id="contagem-input"
+                       placeholder="Ex: 10, 25, 60, 5, 80, 42">
             </div>
 
-            <!-- Fatorial -->
-            <div id="fatorial" class="algo-panel">
-                <h2>Fatorial</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Calcula o fatorial de um número inteiro positivo (N!).</p>
-                <div class="form-group">
-                    <label>Número N:</label>
-                    <input type="number" id="fatorial-input" min="0" placeholder="Ex: 5">
-                </div>
-                <button class="action-btn" onclick="calcFatorial()">Calcular Fatorial</button>
-                <div id="fatorial-result" class="result-box">Aguardando dados...</div>
+            <button class="action-btn"
+                    onclick="calcContagem()">
+                Contar e Filtrar
+            </button>
+
+            <div id="contagem-result"
+                 class="result-box">
+                Aguardando dados...
+            </div>
+        </div>
+
+
+        <!-- 2 - SOMA JS -->
+        <div id="soma-js" class="algo-panel">
+
+            <h2>
+                Soma de Conjunto
+                <span class="language-badge js-badge">JS</span>
+            </h2>
+
+            <p class="description">
+                Calcula o somatório de uma sequência de números.
+            </p>
+
+            <div class="form-group">
+                <label>Números separados por vírgula:</label>
+                <input type="text"
+                       id="soma-input"
+                       placeholder="Ex: 5, 10, 15, 20">
             </div>
 
-            <!-- Fibonacci -->
-            <div id="fibonacci" class="algo-panel">
-                <h2>Fibonacci</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Gera os N primeiros termos da sequência de Fibonacci.</p>
-                <div class="form-group">
-                    <label>Quantidade de termos (N):</label>
-                    <input type="number" id="fibonacci-input" min="1" placeholder="Ex: 8">
-                </div>
-                <button class="action-btn" onclick="calcFibonacci()">Gerar Sequência</button>
-                <div id="fibonacci-result" class="result-box">Aguardando dados...</div>
+            <button class="action-btn"
+                    onclick="calcSoma()">
+                Calcular Soma
+            </button>
+
+            <div id="soma-result"
+                 class="result-box">
+                Aguardando dados...
+            </div>
+        </div>
+
+
+        <!-- 3 - FATORIAL JS -->
+        <div id="fatorial-js" class="algo-panel">
+
+            <h2>
+                Fatorial
+                <span class="language-badge js-badge">JS</span>
+            </h2>
+
+            <p class="description">
+                Calcula o fatorial de um número inteiro não-negativo.
+            </p>
+
+            <div class="form-group">
+                <label>Número N:</label>
+                <input type="number"
+                       id="fatorial-input"
+                       min="0"
+                       placeholder="Ex: 5">
             </div>
 
-            <!-- MDC -->
-            <div id="mdc" class="algo-panel">
-                <h2>Máximo Divisor Comum (MDC)</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Calcula o MDC de dois números pelo Algoritmo de Euclides.</p>
-                <div class="form-group">
-                    <label>Primeiro número (A):</label>
-                    <input type="number" id="mdc-a" placeholder="Ex: 48">
-                </div>
-                <div class="form-group">
-                    <label>Segundo número (B):</label>
-                    <input type="number" id="mdc-b" placeholder="Ex: 18">
-                </div>
-                <button class="action-btn" onclick="calcMDC()">Calcular MDC</button>
-                <div id="mdc-result" class="result-box">Aguardando dados...</div>
+            <button class="action-btn"
+                    onclick="calcFatorial()">
+                Calcular Fatorial
+            </button>
+
+            <div id="fatorial-result"
+                 class="result-box">
+                Aguardando dados...
+            </div>
+        </div>
+
+
+        <!-- 4 - FIBONACCI JS -->
+        <div id="fibonacci-js" class="algo-panel">
+
+            <h2>
+                Fibonacci
+                <span class="language-badge js-badge">JS</span>
+            </h2>
+
+            <p class="description">
+                Gera os N primeiros termos da sequência de Fibonacci.
+            </p>
+
+            <div class="form-group">
+                <label>Quantidade de termos:</label>
+                <input type="number"
+                       id="fibonacci-input"
+                       min="1"
+                       placeholder="Ex: 8">
             </div>
 
-            <!-- Primo -->
-            <div id="primo" class="algo-panel">
-                <h2>Número Primo</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Verifica se um número inteiro é primo.</p>
-                <div class="form-group">
-                    <label>Número N:</label>
-                    <input type="number" id="primo-input" min="1" placeholder="Ex: 29">
-                </div>
-                <button class="action-btn" onclick="calcPrimo()">Verificar</button>
-                <div id="primo-result" class="result-box">Aguardando dados...</div>
+            <button class="action-btn"
+                    onclick="calcFibonacci()">
+                Gerar Sequência
+            </button>
+
+            <div id="fibonacci-result"
+                 class="result-box">
+                Aguardando dados...
+            </div>
+        </div>
+
+
+        <!-- 5 - MDC JS -->
+        <div id="mdc-js" class="algo-panel">
+
+            <h2>
+                Máximo Divisor Comum
+                <span class="language-badge js-badge">JS</span>
+            </h2>
+
+            <p class="description">
+                Calcula o MDC de dois números pelo Algoritmo de Euclides.
+            </p>
+
+            <div class="form-group">
+                <label>Primeiro número (A):</label>
+                <input type="number"
+                       id="mdc-a"
+                       placeholder="Ex: 48">
             </div>
 
-            <!-- Quicksort -->
-            <div id="quicksort" class="algo-panel">
-                <h2>Ordenação (Quicksort)</h2>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Ordena uma lista numérica em ordem crescente.</p>
-                <div class="form-group">
-                    <label>Números (separados por vírgula):</label>
-                    <input type="text" id="quicksort-input" placeholder="Ex: 34, 7, 23, 32, 5, 62">
-                </div>
-                <button class="action-btn" onclick="calcQuicksort()">Ordenar Lista</button>
-                <div id="quicksort-result" class="result-box">Aguardando dados...</div>
+            <div class="form-group">
+                <label>Segundo número (B):</label>
+                <input type="number"
+                       id="mdc-b"
+                       placeholder="Ex: 18">
             </div>
-        </main>
-    </div>
 
-    <script>
-        function showAlgo(id, btn) {
-            document.querySelectorAll('.algo-panel').forEach(panel => panel.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
+            <button class="action-btn"
+                    onclick="calcMDC()">
+                Calcular MDC
+            </button>
+
+            <div id="mdc-result"
+                 class="result-box">
+                Aguardando dados...
+            </div>
+        </div>
+
+
+        <!-- 6 - PRIMO JS -->
+        <div id="primo-js" class="algo-panel">
+
+            <h2>
+                Número Primo
+                <span class="language-badge js-badge">JS</span>
+            </h2>
+
+            <p class="description">
+                Verifica se um número inteiro é primo.
+            </p>
+
+            <div class="form-group">
+                <label>Número N:</label>
+                <input type="number"
+                       id="primo-input"
+                       min="1"
+                       placeholder="Ex: 29">
+            </div>
+
+            <button class="action-btn"
+                    onclick="calcPrimo()">
+                Verificar
+            </button>
+
+            <div id="primo-result"
+                 class="result-box">
+                Aguardando dados...
+            </div>
+        </div>
+
+
+        <!-- 7 - QUICKSORT JS -->
+        <div id="quicksort-js" class="algo-panel">
+
+            <h2>
+                Ordenação - Quicksort
+                <span class="language-badge js-badge">JS</span>
+            </h2>
+
+            <p class="description">
+                Ordena uma lista numérica em ordem crescente.
+            </p>
+
+            <div class="form-group">
+                <label>Números separados por vírgula:</label>
+                <input type="text"
+                       id="quicksort-input"
+                       placeholder="Ex: 34, 7, 23, 32, 5, 62">
+            </div>
+
+            <button class="action-btn"
+                    onclick="calcQuicksort()">
+                Ordenar Lista
+            </button>
+
+            <div id="quicksort-result"
+                 class="result-box">
+                Aguardando dados...
+            </div>
+        </div>
+
+
+        <!-- =====================================================
+             JAVA
+        ====================================================== -->
+
+        <!-- 8 - CONTAGEM JAVA -->
+        <div id="contagem-java" class="algo-panel">
+
+            <h2>
+                Contagem
+                <span class="language-badge java-badge">Java</span>
+            </h2>
+
+            <p class="description">
+                Versão do algoritmo de contagem implementada em Java.
+            </p>
+
+            <div class="form-group">
+                <label>Número Limite:</label>
+                <input type="number"
+                       id="java-contagem-limite"
+                       placeholder="Ex: 50">
+            </div>
+
+            <div class="form-group">
+                <label>Valores separados por vírgula:</label>
+                <input type="text"
+                       id="java-contagem-input"
+                       placeholder="Ex: 10, 25, 60, 5, 80, 42">
+            </div>
+
+            <button class="action-btn java-action"
+                    onclick="calcJavaContagem()">
+                Executar Java
+            </button>
+
+            <div id="java-contagem-result"
+                 class="result-box java-result">
+                Aguardando dados...
+            </div>
+
+            <div class="code-title">
+                Código Java correspondente:
+            </div>
+
+<pre>
+import java.util.*;
+
+public class Contagem {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Limite: ");
+        double limite = scanner.nextDouble();
+
+        scanner.nextLine();
+
+        System.out.print("Valores separados por vírgula: ");
+        String entrada = scanner.nextLine();
+
+        String[] valores = entrada.split(",");
+
+        double menor = Double.MAX_VALUE;
+
+        for (String valor : valores) {
+            double numero = Double.parseDouble(valor.trim());
+
+            if (numero < menor) {
+                menor = numero;
+            }
         }
 
-        // 1. Contagem (CORRIGIDO)
-        function calcContagem() {
-            const limite = parseFloat(document.getElementById('contagem-limite').value);
-            const raw = document.getElementById('contagem-input').value;
-            
-            if (isNaN(limite)) {
-                return alert('Por favor, digite um número limite válido.');
+        int contador = 0;
+
+        System.out.println("Números válidos:");
+
+        for (String valor : valores) {
+
+            double numero =
+                Double.parseDouble(valor.trim());
+
+            if (numero >= menor && numero <= limite) {
+                System.out.println(numero);
+                contador++;
             }
-
-            const nums = raw.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
-            
-            if (!nums.length) {
-                return alert('Por favor, insira valores numéricos válidos na lista.');
-            }
-
-            // Descobre qual é o menor número da lista digitada
-            const menor = Math.min(...nums);
-            
-            // Filtra os números que estão entre o menor valor e o limite
-            const validados = nums.filter(n => n >= menor && n <= limite);
-
-            document.getElementById('contagem-result').innerText = 
-                `Menor valor digitado: ${menor}\n` +
-                `Limite estabelecido: ${limite}\n` +
-                `--------------------------\n` +
-                `Números que se encaixam: [${validados.join(', ')}]\n` +
-                `Contagem total: ${validados.length} número(s)`;
         }
 
-        // 2. Soma
-        function calcSoma() {
-            const raw = document.getElementById('soma-input').value;
-            const nums = raw.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
-            if (!nums.length) return alert('Insira números válidos.');
+        System.out.println("Total: " + contador);
+    }
+}
+</pre>
 
-            const total = nums.reduce((acc, curr) => acc + curr, 0);
-            document.getElementById('soma-result').innerText = `Valores: [${nums.join(', ')}]\nSoma Total: ${total}`;
+        </div>
+
+
+        <!-- 9 - SOMA JAVA -->
+        <div id="soma-java" class="algo-panel">
+
+            <h2>
+                Soma de Conjunto
+                <span class="language-badge java-badge">Java</span>
+            </h2>
+
+            <p class="description">
+                Calcula o somatório de uma sequência usando Java.
+            </p>
+
+            <div class="form-group">
+                <label>Números separados por vírgula:</label>
+                <input type="text"
+                       id="java-soma-input"
+                       placeholder="Ex: 5, 10, 15, 20">
+            </div>
+
+            <button class="action-btn java-action"
+                    onclick="calcJavaSoma()">
+                Executar Java
+            </button>
+
+            <div id="java-soma-result"
+                 class="result-box java-result">
+                Aguardando dados...
+            </div>
+
+            <div class="code-title">
+                Código Java correspondente:
+            </div>
+
+<pre>
+import java.util.*;
+
+public class Soma {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite os números: ");
+
+        String entrada = scanner.nextLine();
+
+        String[] valores = entrada.split(",");
+
+        double soma = 0;
+
+        for (String valor : valores) {
+
+            double numero =
+                Double.parseDouble(valor.trim());
+
+            soma += numero;
         }
 
-        // 3. Fatorial
-        function calcFatorial() {
-            const n = parseInt(document.getElementById('fatorial-input').value);
-            if (isNaN(n) || n < 0) return alert('Insira um número inteiro não-negativo.');
+        System.out.println("Soma: " + soma);
+    }
+}
+</pre>
 
-            let fat = 1n;
-            for (let i = 2n; i <= BigInt(n); i++) {
-                fat *= i;
-            }
-            document.getElementById('fatorial-result').innerText = `${n}! = ${fat.toString()}`;
+        </div>
+
+
+        <!-- 10 - FATORIAL JAVA -->
+        <div id="fatorial-java" class="algo-panel">
+
+            <h2>
+                Fatorial
+                <span class="language-badge java-badge">Java</span>
+            </h2>
+
+            <p class="description">
+                Calcula o fatorial de um número usando Java.
+            </p>
+
+            <div class="form-group">
+                <label>Número N:</label>
+                <input type="number"
+                       id="java-fatorial-input"
+                       min="0"
+                       placeholder="Ex: 5">
+            </div>
+
+            <button class="action-btn java-action"
+                    onclick="calcJavaFatorial()">
+                Executar Java
+            </button>
+
+            <div id="java-fatorial-result"
+                 class="result-box java-result">
+                Aguardando dados...
+            </div>
+
+            <div class="code-title">
+                Código Java correspondente:
+            </div>
+
+<pre>
+import java.util.*;
+
+public class Fatorial {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite N: ");
+
+        int n = scanner.nextInt();
+
+        long fatorial = 1;
+
+        for (int i = 2; i <= n; i++) {
+            fatorial *= i;
         }
 
-        // 4. Fibonacci
-        function calcFibonacci() {
-            const n = parseInt(document.getElementById('fibonacci-input').value);
-            if (isNaN(n) || n <= 0) return alert('Insira um número maior que 0.');
+        System.out.println(
+            n + "! = " + fatorial
+        );
+    }
+}
+</pre>
 
-            let seq = [];
-            if (n >= 1) seq.push(0);
-            if (n >= 2) seq.push(1);
+        </div>
 
-            for (let i = 2; i < n; i++) {
-                seq.push(seq[i - 1] + seq[i - 2]);
+
+        <!-- 11 - FIBONACCI JAVA -->
+        <div id="fibonacci-java" class="algo-panel">
+
+            <h2>
+                Fibonacci
+                <span class="language-badge java-badge">Java</span>
+            </h2>
+
+            <p class="description">
+                Gera os N primeiros termos de Fibonacci usando Java.
+            </p>
+
+            <div class="form-group">
+                <label>Quantidade de termos:</label>
+                <input type="number"
+                       id="java-fibonacci-input"
+                       min="1"
+                       placeholder="Ex: 8">
+            </div>
+
+            <button class="action-btn java-action"
+                    onclick="calcJavaFibonacci()">
+                Executar Java
+            </button>
+
+            <div id="java-fibonacci-result"
+                 class="result-box java-result">
+                Aguardando dados...
+            </div>
+
+            <div class="code-title">
+                Código Java correspondente:
+            </div>
+
+<pre>
+import java.util.*;
+
+public class Fibonacci {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Quantidade: ");
+
+        int n = scanner.nextInt();
+
+        long a = 0;
+        long b = 1;
+
+        for (int i = 0; i < n; i++) {
+
+            System.out.print(a);
+
+            if (i < n - 1) {
+                System.out.print(", ");
             }
 
-            document.getElementById('fibonacci-result').innerText = `Primeiros ${n} termos:\n${seq.join(', ')}`;
+            long proximo = a + b;
+
+            a = b;
+            b = proximo;
+        }
+    }
+}
+</pre>
+
+        </div>
+
+
+        <!-- 12 - MDC JAVA -->
+        <div id="mdc-java" class="algo-panel">
+
+            <h2>
+                Máximo Divisor Comum
+                <span class="language-badge java-badge">Java</span>
+            </h2>
+
+            <p class="description">
+                Calcula o MDC utilizando o Algoritmo de Euclides.
+            </p>
+
+            <div class="form-group">
+                <label>Primeiro número (A):</label>
+                <input type="number"
+                       id="java-mdc-a"
+                       placeholder="Ex: 48">
+            </div>
+
+            <div class="form-group">
+                <label>Segundo número (B):</label>
+                <input type="number"
+                       id="java-mdc-b"
+                       placeholder="Ex: 18">
+            </div>
+
+            <button class="action-btn java-action"
+                    onclick="calcJavaMDC()">
+                Executar Java
+            </button>
+
+            <div id="java-mdc-result"
+                 class="result-box java-result">
+                Aguardando dados...
+            </div>
+
+            <div class="code-title">
+                Código Java correspondente:
+            </div>
+
+<pre>
+import java.util.*;
+
+public class MDC {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("A: ");
+        int a = scanner.nextInt();
+
+        System.out.print("B: ");
+        int b = scanner.nextInt();
+
+        a = Math.abs(a);
+        b = Math.abs(b);
+
+        while (b != 0) {
+
+            int temp = b;
+
+            b = a % b;
+
+            a = temp;
         }
 
-        // 5. MDC
-        function calcMDC() {
-            let a = parseInt(document.getElementById('mdc-a').value);
-            let b = parseInt(document.getElementById('mdc-b').value);
+        System.out.println("MDC = " + a);
+    }
+}
+</pre>
 
-            if (isNaN(a) || isNaN(b)) return alert('Insira dois números inteiros válidos.');
+        </div>
 
-            const origA = a, origB = b;
-            a = Math.abs(a);
-            b = Math.abs(b);
 
-            while (b) {
-                let temp = b;
-                b = a % b;
-                a = temp;
-            }
+        <!-- 13 - PRIMO JAVA -->
+        <div id="primo-java" class="algo-panel">
 
-            document.getElementById('mdc-result').innerText = `MDC(${origA}, ${origB}) = ${a}`;
+            <h2>
+                Número Primo
+                <span class="language-badge java-badge">Java</span>
+            </h2>
+
+            <p class="description">
+                Verifica se um número inteiro é primo usando Java.
+            </p>
+
+            <div class="form-group">
+                <label>Número N:</label>
+                <input type="number"
+                       id="java-primo-input"
+                       min="1"
+                       placeholder="Ex: 29">
+            </div>
+
+            <button class="action-btn java-action"
+                    onclick="calcJavaPrimo()">
+                Executar Java
+            </button>
+
+            <div id="java-primo-result"
+                 class="result-box java-result">
+                Aguardando dados...
+            </div>
+
+            <div class="code-title">
+                Código Java correspondente:
+            </div>
+
+<pre>
+import java.util.*;
+
+public class Primo {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite N: ");
+
+        int n = scanner.nextInt();
+
+        boolean primo = true;
+
+        if (n <= 1) {
+            primo = false;
         }
 
-        // 6. Número Primo
-        function calcPrimo() {
-            const n = parseInt(document.getElementById('primo-input').value);
-            if (isNaN(n) || n <= 0) return alert('Insira um número maior que 0.');
+        for (int i = 2; i <= Math.sqrt(n); i++) {
 
-            if (n <= 1) {
-                document.getElementById('primo-result').innerText = `${n} NÃO é um número primo.`;
-                return;
+            if (n % i == 0) {
+                primo = false;
+                break;
             }
+        }
 
-            let isPrime = true;
-            for (let i = 2; i <= Math.sqrt(n); i++) {
-                if (n % i === 0) {
-                    isPrime = false;
-                    break;
+        if (primo) {
+            System.out.println(
+                n + " é primo."
+            );
+        } else {
+            System.out.println(
+                n + " não é primo."
+            );
+        }
+    }
+}
+</pre>
+
+        </div>
+
+
+        <!-- 14 - QUICKSORT JAVA -->
+        <div id="quicksort-java" class="algo-panel">
+
+            <h2>
+                Ordenação - Quicksort
+                <span class="language-badge java-badge">Java</span>
+            </h2>
+
+            <p class="description">
+                Ordena uma lista numérica usando o algoritmo Quicksort.
+            </p>
+
+            <div class="form-group">
+                <label>Números separados por vírgula:</label>
+                <input type="text"
+                       id="java-quicksort-input"
+                       placeholder="Ex: 34, 7, 23, 32, 5, 62">
+            </div>
+
+            <button class="action-btn java-action"
+                    onclick="calcJavaQuicksort()">
+                Executar Java
+            </button>
+
+            <div id="java-quicksort-result"
+                 class="result-box java-result">
+                Aguardando dados...
+            </div>
+
+            <div class="code-title">
+                Código Java correspondente:
+            </div>
+
+<pre>
+import java.util.*;
+
+public class Quicksort {
+
+    public static void quicksort(
+        int[] array,
+        int inicio,
+        int fim
+    ) {
+
+        if (inicio < fim) {
+
+            int pivo = array[fim];
+
+            int i = inicio - 1;
+
+            for (int j = inicio; j < fim; j++) {
+
+                if (array[j] <= pivo) {
+
+                    i++;
+
+                    int temp = array[i];
+
+                    array[i] = array[j];
+
+                    array[j] = temp;
                 }
             }
 
-            document.getElementById('primo-result').innerText = isPrime 
-                ? `${n} É um número primo!` 
-                : `${n} NÃO é um número primo.`;
+            int temp = array[i + 1];
+
+            array[i + 1] = array[fim];
+
+            array[fim] = temp;
+
+            int indicePivo = i + 1;
+
+            quicksort(
+                array,
+                inicio,
+                indicePivo - 1
+            );
+
+            quicksort(
+                array,
+                indicePivo + 1,
+                fim
+            );
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int[] numeros = {
+            34, 7, 23, 32, 5, 62
+        };
+
+        quicksort(
+            numeros,
+            0,
+            numeros.length - 1
+        );
+
+        System.out.println(
+            Arrays.toString(numeros)
+        );
+    }
+}
+</pre>
+
+        </div>
+
+    </main>
+</div>
+
+
+<script>
+
+    /* =========================================================
+       CONTROLE DAS ABAS
+    ========================================================= */
+
+    function showAlgo(id, btn) {
+
+        document
+            .querySelectorAll('.algo-panel')
+            .forEach(panel =>
+                panel.classList.remove('active')
+            );
+
+        document
+            .querySelectorAll('.nav-btn')
+            .forEach(button =>
+                button.classList.remove('active')
+            );
+
+        document
+            .getElementById(id)
+            .classList.add('active');
+
+        btn.classList.add('active');
+    }
+
+
+    /* =========================================================
+       JAVASCRIPT
+    ========================================================= */
+
+    // 1. CONTAGEM
+    function calcContagem() {
+
+        const limite =
+            parseFloat(
+                document.getElementById(
+                    'contagem-limite'
+                ).value
+            );
+
+        const raw =
+            document.getElementById(
+                'contagem-input'
+            ).value;
+
+        if (isNaN(limite)) {
+            return alert(
+                'Por favor, digite um limite válido.'
+            );
         }
 
-        // 7. Quicksort
-        function calcQuicksort() {
-            const raw = document.getElementById('quicksort-input').value;
-            const nums = raw.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
-            if (!nums.length) return alert('Insira números válidos.');
+        const nums =
+            raw
+                .split(',')
+                .map(n => parseFloat(n.trim()))
+                .filter(n => !isNaN(n));
 
-            function quicksort(arr) {
-                if (arr.length <= 1) return arr;
-                const pivot = arr[Math.floor(arr.length / 2)];
-                const left = arr.filter(x => x < pivot);
-                const middle = arr.filter(x => x === pivot);
-                const right = arr.filter(x => x > pivot);
-                return [...quicksort(left), ...middle, ...quicksort(right)];
+        if (!nums.length) {
+            return alert(
+                'Insira valores numéricos válidos.'
+            );
+        }
+
+        const menor = Math.min(...nums);
+
+        const validados =
+            nums.filter(
+                n => n >= menor && n <= limite
+            );
+
+        document.getElementById(
+            'contagem-result'
+        ).innerText =
+            `Menor valor digitado: ${menor}\n` +
+            `Limite estabelecido: ${limite}\n` +
+            `--------------------------\n` +
+            `Números que se encaixam: [${validados.join(', ')}]\n` +
+            `Contagem total: ${validados.length} número(s)`;
+    }
+
+
+    // 2. SOMA
+    function calcSoma() {
+
+        const raw =
+            document.getElementById(
+                'soma-input'
+            ).value;
+
+        const nums =
+            raw
+                .split(',')
+                .map(n => parseFloat(n.trim()))
+                .filter(n => !isNaN(n));
+
+        if (!nums.length) {
+            return alert(
+                'Insira números válidos.'
+            );
+        }
+
+        const total =
+            nums.reduce(
+                (acc, curr) => acc + curr,
+                0
+            );
+
+        document.getElementById(
+            'soma-result'
+        ).innerText =
+            `Valores: [${nums.join(', ')}]\n` +
+            `Soma Total: ${total}`;
+    }
+
+
+    // 3. FATORIAL
+    function calcFatorial() {
+
+        const n =
+            parseInt(
+                document.getElementById(
+                    'fatorial-input'
+                ).value
+            );
+
+        if (isNaN(n) || n < 0) {
+            return alert(
+                'Insira um número inteiro não-negativo.'
+            );
+        }
+
+        let fat = 1n;
+
+        for (
+            let i = 2n;
+            i <= BigInt(n);
+            i++
+        ) {
+            fat *= i;
+        }
+
+        document.getElementById(
+            'fatorial-result'
+        ).innerText =
+            `${n}! = ${fat}`;
+    }
+
+
+    // 4. FIBONACCI
+    function calcFibonacci() {
+
+        const n =
+            parseInt(
+                document.getElementById(
+                    'fibonacci-input'
+                ).value
+            );
+
+        if (isNaN(n) || n <= 0) {
+            return alert(
+                'Insira um número maior que 0.'
+            );
+        }
+
+        let seq = [];
+
+        if (n >= 1) seq.push(0);
+
+        if (n >= 2) seq.push(1);
+
+        for (let i = 2; i < n; i++) {
+
+            seq.push(
+                seq[i - 1] +
+                seq[i - 2]
+            );
+        }
+
+        document.getElementById(
+            'fibonacci-result'
+        ).innerText =
+            `Primeiros ${n} termos:\n` +
+            seq.join(', ');
+    }
+
+
+    // 5. MDC
+    function calcMDC() {
+
+        let a =
+            parseInt(
+                document.getElementById(
+                    'mdc-a'
+                ).value
+            );
+
+        let b =
+            parseInt(
+                document.getElementById(
+                    'mdc-b'
+                ).value
+            );
+
+        if (isNaN(a) || isNaN(b)) {
+            return alert(
+                'Insira dois números inteiros válidos.'
+            );
+        }
+
+        const origA = a;
+        const origB = b;
+
+        a = Math.abs(a);
+        b = Math.abs(b);
+
+        while (b !== 0) {
+
+            const temp = b;
+
+            b = a % b;
+
+            a = temp;
+        }
+
+        document.getElementById(
+            'mdc-result'
+        ).innerText =
+            `MDC(${origA}, ${origB}) = ${a}`;
+    }
+
+
+    // 6. PRIMO
+    function calcPrimo() {
+
+        const n =
+            parseInt(
+                document.getElementById(
+                    'primo-input'
+                ).value
+            );
+
+        if (isNaN(n) || n <= 0) {
+            return alert(
+                'Insira um número maior que 0.'
+            );
+        }
+
+        if (n <= 1) {
+
+            document.getElementById(
+                'primo-result'
+            ).innerText =
+                `${n} NÃO é um número primo.`;
+
+            return;
+        }
+
+        let isPrime = true;
+
+        for (
+            let i = 2;
+            i <= Math.sqrt(n);
+            i++
+        ) {
+
+            if (n % i === 0) {
+
+                isPrime = false;
+
+                break;
+            }
+        }
+
+        document.getElementById(
+            'primo-result'
+        ).innerText =
+            isPrime
+                ? `${n} É um número primo!`
+                : `${n} NÃO é um número primo.`;
+    }
+
+
+    // 7. QUICKSORT
+    function calcQuicksort() {
+
+        const raw =
+            document.getElementById(
+                'quicksort-input'
+            ).value;
+
+        const nums =
+            raw
+                .split(',')
+                .map(n => parseFloat(n.trim()))
+                .filter(n => !isNaN(n));
+
+        if (!nums.length) {
+            return alert(
+                'Insira números válidos.'
+            );
+        }
+
+        function quicksort(arr) {
+
+            if (arr.length <= 1) {
+                return arr;
             }
 
-            const sorted = quicksort(nums);
-            document.getElementById('quicksort-result').innerText = `Original: [${nums.join(', ')}]\nOrdenado: [${sorted.join(', ')}]`;
+            const pivot =
+                arr[
+                    Math.floor(arr.length / 2)
+                ];
+
+            const left =
+                arr.filter(x => x < pivot);
+
+            const middle =
+                arr.filter(x => x === pivot);
+
+            const right =
+                arr.filter(x => x > pivot);
+
+            return [
+                ...quicksort(left),
+                ...middle,
+                ...quicksort(right)
+            ];
         }
-    </script>
+
+        const sorted =
+            quicksort(nums);
+
+        document.getElementById(
+            'quicksort-result'
+        ).innerText =
+            `Original: [${nums.join(', ')}]\n` +
+            `Ordenado: [${sorted.join(', ')}]`;
+    }
+
+
+    /* =========================================================
+       JAVA - SIMULAÇÕES PARA FUNCIONAR NO NAVEGADOR
+    ========================================================= */
+
+    // 8. CONTAGEM JAVA
+    function calcJavaContagem() {
+
+        const limite =
+            parseFloat(
+                document.getElementById(
+                    'java-contagem-limite'
+                ).value
+            );
+
+        const raw =
+            document.getElementById(
+                'java-contagem-input'
+            ).value;
+
+        if (isNaN(limite)) {
+            return alert(
+                'Digite um limite válido.'
+            );
+        }
+
+        const nums =
+            raw
+                .split(',')
+                .map(n => parseFloat(n.trim()))
+                .filter(n => !isNaN(n));
+
+        if (!nums.length) {
+            return alert(
+                'Insira valores válidos.'
+            );
+        }
+
+        const menor =
+            Math.min(...nums);
+
+        const validados =
+            nums.filter(
+                n => n >= menor && n <= limite
+            );
+
+        document.getElementById(
+            'java-contagem-result'
+        ).innerText =
+            `Simulação da versão Java\n\n` +
+            `Menor valor: ${menor}\n` +
+            `Limite: ${limite}\n` +
+            `Números válidos: [${validados.join(', ')}]\n` +
+            `Total: ${validados.length}`;
+    }
+
+
+    // 9. SOMA JAVA
+    function calcJavaSoma() {
+
+        const raw =
+            document.getElementById(
+                'java-soma-input'
+            ).value;
+
+        const nums =
+            raw
+                .split(',')
+                .map(n => parseFloat(n.trim()))
+                .filter(n => !isNaN(n));
+
+        if (!nums.length) {
+            return alert(
+                'Insira números válidos.'
+            );
+        }
+
+        let soma = 0;
+
+        for (const numero of nums) {
+            soma += numero;
+        }
+
+        document.getElementById(
+            'java-soma-result'
+        ).innerText =
+            `Simulação da versão Java\n\n` +
+            `Valores: [${nums.join(', ')}]\n` +
+            `Soma: ${soma}`;
+    }
+
+
+    // 10. FATORIAL JAVA
+    function calcJavaFatorial() {
+
+        const n =
+            parseInt(
+                document.getElementById(
+                    'java-fatorial-input'
+                ).value
+            );
+
+        if (isNaN(n) || n < 0) {
+            return alert(
+                'Digite um número inteiro não-negativo.'
+            );
+        }
+
+        let fat = 1n;
+
+        for (
+            let i = 2n;
+            i <= BigInt(n);
+            i++
+        ) {
+            fat *= i;
+        }
+
+        document.getElementById(
+            'java-fatorial-result'
+        ).innerText =
+            `Simulação da versão Java\n\n` +
+            `${n}! = ${fat}`;
+    }
+
+
+    // 11. FIBONACCI JAVA
+    function calcJavaFibonacci() {
+
+        const n =
+            parseInt(
+                document.getElementById(
+                    'java-fibonacci-input'
+                ).value
+            );
+
+        if (isNaN(n) || n <= 0) {
+            return alert(
+                'Digite um número maior que 0.'
+            );
+        }
+
+        let a = 0;
+        let b = 1;
+
+        const seq = [];
+
+        for (let i = 0; i < n; i++) {
+
+            seq.push(a);
+
+            const proximo = a + b;
+
+            a = b;
+
+            b = proximo;
+        }
+
+        document.getElementById(
+            'java-fibonacci-result'
+        ).innerText =
+            `Simulação da versão Java\n\n` +
+            `Primeiros ${n} termos:\n` +
+            seq.join(', ');
+    }
+
+
+    // 12. MDC JAVA
+    function calcJavaMDC() {
+
+        let a =
+            parseInt(
+                document.getElementById(
+                    'java-mdc-a'
+                ).value
+            );
+
+        let b =
+            parseInt(
+                document.getElementById(
+                    'java-mdc-b'
+                ).value
+            );
+
+        if (isNaN(a) || isNaN(b)) {
+            return alert(
+                'Digite dois números válidos.'
+            );
+        }
+
+        const origA = a;
+        const origB = b;
+
+        a = Math.abs(a);
+        b = Math.abs(b);
+
+        while (b !== 0) {
+
+            const temp = b;
+
+            b = a % b;
+
+            a = temp;
+        }
+
+        document.getElementById(
+            'java-mdc-result'
+        ).innerText =
+            `Simulação da versão Java\n\n` +
+            `MDC(${origA}, ${origB}) = ${a}`;
+    }
+
+
+    // 13. PRIMO JAVA
+    function calcJavaPrimo() {
+
+        const n =
+            parseInt(
+                document.getElementById(
+                    'java-primo-input'
+                ).value
+            );
+
+        if (isNaN(n) || n <= 0) {
+            return alert(
+                'Digite um número maior que 0.'
+            );
+        }
+
+        let primo = true;
+
+        if (n <= 1) {
+            primo = false;
+        }
+
+        for (
+            let i = 2;
+            i <= Math.sqrt(n);
+            i++
+        ) {
+
+            if (n % i === 0) {
+
+                primo = false;
+
+                break;
+            }
+        }
+
+        document.getElementById(
+            'java-primo-result'
+        ).innerText =
+            `Simulação da versão Java\n\n` +
+            (
+                primo
+                    ? `${n} é primo.`
+                    : `${n} não é primo.`
+            );
+    }
+
+
+    // 14. QUICKSORT JAVA
+    function calcJavaQuicksort() {
+
+        const raw =
+            document.getElementById(
+                'java-quicksort-input'
+            ).value;
+
+        const nums =
+            raw
+                .split(',')
+                .map(n => parseFloat(n.trim()))
+                .filter(n => !isNaN(n));
+
+        if (!nums.length) {
+            return alert(
+                'Insira números válidos.'
+            );
+        }
+
+        function quicksort(arr) {
+
+            if (arr.length <= 1) {
+                return arr;
+            }
+
+            const pivot =
+                arr[arr.length - 1];
+
+            const left = [];
+            const right = [];
+            const middle = [];
+
+            for (const numero of arr) {
+
+                if (numero < pivot) {
+
+                    left.push(numero);
+
+                } else if (numero > pivot) {
+
+                    right.push(numero);
+
+                } else {
+
+                    middle.push(numero);
+                }
+            }
+
+            return [
+                ...quicksort(left),
+                ...middle,
+                ...quicksort(right)
+            ];
+        }
+
+        const sorted =
+            quicksort(nums);
+
+        document.getElementById(
+            'java-quicksort-result'
+        ).innerText =
+            `Simulação da versão Java\n\n` +
+            `Original: [${nums.join(', ')}]\n` +
+            `Ordenado: [${sorted.join(', ')}]`;
+    }
+
+</script>
+
 </body>
 </html>
