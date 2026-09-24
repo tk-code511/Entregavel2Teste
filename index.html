@@ -3,1825 +3,600 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algoritmos Fundamentais - JS e Java</title>
-
+    <title>IDE - Algoritmos Fundamentais</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Prism.js (Syntax Highlighting) - Dark Theme -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #38bdf8;
-            --accent-hover: #0284c7;
-            --java: #f97316;
-            --java-hover: #ea580c;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --code-bg: #020617;
+        /* Customizações de scrollbar e layout para manter aspecto de IDE */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e2f; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+        
+        pre[class*="language-"] {
+            margin: 0 !important;
+            height: 100%;
+            border-radius: 0;
+            background-color: transparent !important;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        #code-editor-container {
+            background-color: #1d1f21; /* Cor do Prism Tomorrow */
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            background-color: var(--card-bg);
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            color: var(--accent);
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            margin-top: 0.4rem;
-            font-size: 0.9rem;
-        }
-
-        .container {
-            display: flex;
-            flex: 1;
-            max-width: 1400px;
-            margin: 2rem auto;
-            width: 94%;
-            gap: 2rem;
-        }
-
-        nav {
-            width: 270px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .nav-btn {
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-        }
-
-        .nav-btn:hover {
-            border-color: var(--accent);
-            background-color: #26334d;
-        }
-
-        .nav-btn.active {
-            background-color: var(--accent);
-            color: #000;
-            font-weight: bold;
-            border-color: var(--accent);
-        }
-
-        .nav-btn.java {
-            border-left: 4px solid var(--java);
-        }
-
-        .nav-btn.java:hover {
-            border-color: var(--java);
-        }
-
-        .nav-btn.java.active {
-            background-color: var(--java);
-            border-color: var(--java);
-            color: #fff;
-        }
-
-        main {
-            flex: 1;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-            min-width: 0;
-        }
-
-        .algo-panel {
-            display: none;
-        }
-
-        .algo-panel.active {
-            display: block;
-        }
-
-        h2 {
-            margin-bottom: 0.5rem;
-        }
-
-        .description {
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-        }
-
-        .language-badge {
+        .terminal-cursor {
             display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 5px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            margin-left: 0.5rem;
+            width: 8px;
+            height: 15px;
+            background-color: #4ade80;
+            animation: blink 1s step-end infinite;
             vertical-align: middle;
+            margin-left: 2px;
         }
 
-        .js-badge {
-            background: var(--accent);
-            color: #000;
-        }
-
-        .java-badge {
-            background: var(--java);
-            color: #fff;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: #0f172a;
-            color: #fff;
-            font-size: 1rem;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        button.action-btn {
-            background-color: var(--accent);
-            color: #0f172a;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        button.action-btn:hover {
-            background-color: var(--accent-hover);
-            color: #fff;
-        }
-
-        button.java-action {
-            background-color: var(--java);
-            color: #fff;
-        }
-
-        button.java-action:hover {
-            background-color: var(--java-hover);
-        }
-
-        .result-box {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 6px;
-            background-color: #0f172a;
-            border-left: 4px solid var(--accent);
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .java-result {
-            border-left-color: var(--java);
-        }
-
-        .code-title {
-            margin-top: 2rem;
-            margin-bottom: 0.7rem;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        pre {
-            background-color: var(--code-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            overflow-x: auto;
-            color: #e2e8f0;
-            font-family: Consolas, Monaco, monospace;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .legend {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .legend span {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            nav {
-                width: 100%;
-            }
-
-            main {
-                padding: 1.2rem;
-            }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
     </style>
 </head>
+<body class="bg-gray-900 text-gray-100 font-sans h-screen flex overflow-hidden selection:bg-blue-500 selection:text-white">
 
-<body>
+    <!-- Sidebar (Lista de Algoritmos) -->
+    <aside class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col h-full flex-shrink-0 z-20 hidden md:flex absolute md:relative">
+        <div class="p-4 border-b border-gray-700 flex items-center gap-2 bg-gray-900">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            <h1 class="text-lg font-bold text-gray-100 tracking-wide">Algoritmos</h1>
+        </div>
+        <div class="p-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-2">Explorador</div>
+        <nav class="flex-1 overflow-y-auto p-2 flex flex-col gap-1" id="sidebar-nav">
+            <!-- Os botões dos algoritmos serão injetados aqui -->
+        </nav>
+    </aside>
 
-<header>
-    <h1>Algoritmos Fundamentais</h1>
-    <p class="subtitle">
-        Implementações em JavaScript e Java
-    </p>
-</header>
+    <!-- Overlay Mobile -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-10 hidden md:hidden"></div>
 
-<div class="container">
-
-    <nav id="menu">
-
-        <!-- JAVASCRIPT -->
-        <button class="nav-btn active"
-                onclick="showAlgo('contagem-js', this)">
-            1. Contagem (JS)
-        </button>
-
-        <button class="nav-btn"
-                onclick="showAlgo('soma-js', this)">
-            2. Soma de Conjunto (JS)
-        </button>
-
-        <button class="nav-btn"
-                onclick="showAlgo('fatorial-js', this)">
-            3. Fatorial (JS)
-        </button>
-
-        <button class="nav-btn"
-                onclick="showAlgo('fibonacci-js', this)">
-            4. Fibonacci (JS)
-        </button>
-
-        <button class="nav-btn"
-                onclick="showAlgo('mdc-js', this)">
-            5. MDC (JS)
-        </button>
-
-        <button class="nav-btn"
-                onclick="showAlgo('primo-js', this)">
-            6. Número Primo (JS)
-        </button>
-
-        <button class="nav-btn"
-                onclick="showAlgo('quicksort-js', this)">
-            7. Ordenação - Quicksort (JS)
-        </button>
-
-
-        <!-- JAVA -->
-        <button class="nav-btn java"
-                onclick="showAlgo('contagem-java', this)">
-            8. Contagem (Java)
-        </button>
-
-        <button class="nav-btn java"
-                onclick="showAlgo('soma-java', this)">
-            9. Soma de Conjunto (Java)
-        </button>
-
-        <button class="nav-btn java"
-                onclick="showAlgo('fatorial-java', this)">
-            10. Fatorial (Java)
-        </button>
-
-        <button class="nav-btn java"
-                onclick="showAlgo('fibonacci-java', this)">
-            11. Fibonacci (Java)
-        </button>
-
-        <button class="nav-btn java"
-                onclick="showAlgo('mdc-java', this)">
-            12. MDC (Java)
-        </button>
-
-        <button class="nav-btn java"
-                onclick="showAlgo('primo-java', this)">
-            13. Número Primo (Java)
-        </button>
-
-        <button class="nav-btn java"
-                onclick="showAlgo('quicksort-java', this)">
-            14. Ordenação - Quicksort (Java)
-        </button>
-
-    </nav>
-
-
-    <main>
-
-        <!-- =====================================================
-             JAVASCRIPT
-        ====================================================== -->
-
-        <!-- 1 - CONTAGEM JS -->
-        <div id="contagem-js" class="algo-panel active">
-
-            <h2>
-                Contagem
-                <span class="language-badge js-badge">JS</span>
-            </h2>
-
-            <p class="description">
-                Analisa uma sequência e conta os números entre o menor
-                valor digitado e o limite escolhido.
-            </p>
-
-            <div class="form-group">
-                <label>Número Limite (Teto):</label>
-                <input type="number"
-                       id="contagem-limite"
-                       placeholder="Ex: 50">
-            </div>
-
-            <div class="form-group">
-                <label>Valores separados por vírgula:</label>
-                <input type="text"
-                       id="contagem-input"
-                       placeholder="Ex: 10, 25, 60, 5, 80, 42">
-            </div>
-
-            <button class="action-btn"
-                    onclick="calcContagem()">
-                Contar e Filtrar
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-full w-full overflow-hidden bg-gray-950">
+        
+        <!-- Navbar Superior (Mobile Toggle + Título) -->
+        <header class="h-12 bg-gray-800 border-b border-gray-700 flex items-center px-4 flex-shrink-0">
+            <button id="btn-toggle-sidebar" class="md:hidden mr-3 text-gray-400 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
+            <div class="flex items-center text-sm">
+                <span class="text-gray-400 mr-2">/algoritmos/</span>
+                <span id="header-algo-name" class="font-mono text-blue-300 font-semibold">selecione.java</span>
+            </div>
+        </header>
 
-            <div id="contagem-result"
-                 class="result-box">
-                Aguardando dados...
+        <!-- Divisão Horizontal: Topo (Código) / Base (Execução) -->
+        <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            
+            <!-- Área do Código -->
+            <div class="flex-1 flex flex-col overflow-hidden border-b lg:border-b-0 lg:border-r border-gray-700 relative">
+                <div class="h-8 bg-gray-800 flex items-center px-4 text-xs font-mono text-gray-400 border-b border-gray-700 select-none">
+                    <span id="tab-filename">Código Fonte</span>
+                </div>
+                <div id="code-editor-container" class="flex-1 overflow-auto p-4 text-sm relative">
+                    <pre><code id="code-display" class="language-java">// Selecione um algoritmo na barra lateral...</code></pre>
+                </div>
+            </div>
+
+            <!-- Painel de Execução (Direita no Desktop, Baixo no Mobile) -->
+            <div class="w-full lg:w-[400px] xl:w-[450px] flex flex-col bg-gray-900 flex-shrink-0 h-1/2 lg:h-full">
+                <!-- Configurações e Inputs -->
+                <div class="p-4 overflow-y-auto border-b border-gray-700 flex-1">
+                    <h2 class="text-sm font-bold text-gray-200 uppercase tracking-wider mb-1">Painel de Controle</h2>
+                    <p id="panel-desc" class="text-xs text-gray-400 mb-4 h-8">Descrição do algoritmo aparecerá aqui.</p>
+
+                    <!-- Seletor de Linguagem -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Linguagem de Execução</label>
+                        <select id="lang-select" class="w-full bg-gray-800 border border-gray-700 text-sm rounded-md py-2 px-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                            <option value="java">Java (via JVM Simulada)</option>
+                            <option value="js">JavaScript (Nativo)</option>
+                        </select>
+                    </div>
+
+                    <!-- Container de Inputs Dinâmicos -->
+                    <div id="dynamic-inputs" class="flex flex-col gap-3 mb-4">
+                        <!-- Inputs são gerados via JS -->
+                    </div>
+
+                    <button id="btn-execute" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold py-2.5 px-4 rounded-md transition-colors flex justify-center items-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Executar Algoritmo
+                    </button>
+                </div>
+
+                <!-- Terminal -->
+                <div class="h-48 lg:h-1/3 bg-black flex flex-col">
+                    <div class="bg-gray-800 px-3 py-1 flex items-center gap-2 border-b border-gray-700">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M4 12a8 8 0 1116 0 8 8 0 01-16 0z"></path></svg>
+                        <span class="text-xs font-mono text-gray-400">Terminal de Saída</span>
+                    </div>
+                    <div id="terminal-output" class="flex-1 p-3 font-mono text-xs overflow-y-auto text-gray-300">
+                        <div>Servidor de testes iniciado. Aguardando execução...</div>
+                        <!-- Saídas vão aqui -->
+                    </div>
+                </div>
             </div>
         </div>
-
-
-        <!-- 2 - SOMA JS -->
-        <div id="soma-js" class="algo-panel">
-
-            <h2>
-                Soma de Conjunto
-                <span class="language-badge js-badge">JS</span>
-            </h2>
-
-            <p class="description">
-                Calcula o somatório de uma sequência de números.
-            </p>
-
-            <div class="form-group">
-                <label>Números separados por vírgula:</label>
-                <input type="text"
-                       id="soma-input"
-                       placeholder="Ex: 5, 10, 15, 20">
-            </div>
-
-            <button class="action-btn"
-                    onclick="calcSoma()">
-                Calcular Soma
-            </button>
-
-            <div id="soma-result"
-                 class="result-box">
-                Aguardando dados...
-            </div>
-        </div>
-
-
-        <!-- 3 - FATORIAL JS -->
-        <div id="fatorial-js" class="algo-panel">
-
-            <h2>
-                Fatorial
-                <span class="language-badge js-badge">JS</span>
-            </h2>
-
-            <p class="description">
-                Calcula o fatorial de um número inteiro não-negativo.
-            </p>
-
-            <div class="form-group">
-                <label>Número N:</label>
-                <input type="number"
-                       id="fatorial-input"
-                       min="0"
-                       placeholder="Ex: 5">
-            </div>
-
-            <button class="action-btn"
-                    onclick="calcFatorial()">
-                Calcular Fatorial
-            </button>
-
-            <div id="fatorial-result"
-                 class="result-box">
-                Aguardando dados...
-            </div>
-        </div>
-
-
-        <!-- 4 - FIBONACCI JS -->
-        <div id="fibonacci-js" class="algo-panel">
-
-            <h2>
-                Fibonacci
-                <span class="language-badge js-badge">JS</span>
-            </h2>
-
-            <p class="description">
-                Gera os N primeiros termos da sequência de Fibonacci.
-            </p>
-
-            <div class="form-group">
-                <label>Quantidade de termos:</label>
-                <input type="number"
-                       id="fibonacci-input"
-                       min="1"
-                       placeholder="Ex: 8">
-            </div>
-
-            <button class="action-btn"
-                    onclick="calcFibonacci()">
-                Gerar Sequência
-            </button>
-
-            <div id="fibonacci-result"
-                 class="result-box">
-                Aguardando dados...
-            </div>
-        </div>
-
-
-        <!-- 5 - MDC JS -->
-        <div id="mdc-js" class="algo-panel">
-
-            <h2>
-                Máximo Divisor Comum
-                <span class="language-badge js-badge">JS</span>
-            </h2>
-
-            <p class="description">
-                Calcula o MDC de dois números pelo Algoritmo de Euclides.
-            </p>
-
-            <div class="form-group">
-                <label>Primeiro número (A):</label>
-                <input type="number"
-                       id="mdc-a"
-                       placeholder="Ex: 48">
-            </div>
-
-            <div class="form-group">
-                <label>Segundo número (B):</label>
-                <input type="number"
-                       id="mdc-b"
-                       placeholder="Ex: 18">
-            </div>
-
-            <button class="action-btn"
-                    onclick="calcMDC()">
-                Calcular MDC
-            </button>
-
-            <div id="mdc-result"
-                 class="result-box">
-                Aguardando dados...
-            </div>
-        </div>
-
-
-        <!-- 6 - PRIMO JS -->
-        <div id="primo-js" class="algo-panel">
-
-            <h2>
-                Número Primo
-                <span class="language-badge js-badge">JS</span>
-            </h2>
-
-            <p class="description">
-                Verifica se um número inteiro é primo.
-            </p>
-
-            <div class="form-group">
-                <label>Número N:</label>
-                <input type="number"
-                       id="primo-input"
-                       min="1"
-                       placeholder="Ex: 29">
-            </div>
-
-            <button class="action-btn"
-                    onclick="calcPrimo()">
-                Verificar
-            </button>
-
-            <div id="primo-result"
-                 class="result-box">
-                Aguardando dados...
-            </div>
-        </div>
-
-
-        <!-- 7 - QUICKSORT JS -->
-        <div id="quicksort-js" class="algo-panel">
-
-            <h2>
-                Ordenação - Quicksort
-                <span class="language-badge js-badge">JS</span>
-            </h2>
-
-            <p class="description">
-                Ordena uma lista numérica em ordem crescente.
-            </p>
-
-            <div class="form-group">
-                <label>Números separados por vírgula:</label>
-                <input type="text"
-                       id="quicksort-input"
-                       placeholder="Ex: 34, 7, 23, 32, 5, 62">
-            </div>
-
-            <button class="action-btn"
-                    onclick="calcQuicksort()">
-                Ordenar Lista
-            </button>
-
-            <div id="quicksort-result"
-                 class="result-box">
-                Aguardando dados...
-            </div>
-        </div>
-
-
-        <!-- =====================================================
-             JAVA
-        ====================================================== -->
-
-        <!-- 8 - CONTAGEM JAVA -->
-        <div id="contagem-java" class="algo-panel">
-
-            <h2>
-                Contagem
-                <span class="language-badge java-badge">Java</span>
-            </h2>
-
-            <p class="description">
-                Versão do algoritmo de contagem implementada em Java.
-            </p>
-
-            <div class="form-group">
-                <label>Número Limite:</label>
-                <input type="number"
-                       id="java-contagem-limite"
-                       placeholder="Ex: 50">
-            </div>
-
-            <div class="form-group">
-                <label>Valores separados por vírgula:</label>
-                <input type="text"
-                       id="java-contagem-input"
-                       placeholder="Ex: 10, 25, 60, 5, 80, 42">
-            </div>
-
-            <button class="action-btn java-action"
-                    onclick="calcJavaContagem()">
-                Executar Java
-            </button>
-
-            <div id="java-contagem-result"
-                 class="result-box java-result">
-                Aguardando dados...
-            </div>
-
-            <div class="code-title">
-                Código Java correspondente:
-            </div>
-
-<pre>
-import java.util.*;
-
-public class Contagem {
-
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Limite: ");
-        double limite = scanner.nextDouble();
-
-        scanner.nextLine();
-
-        System.out.print("Valores separados por vírgula: ");
-        String entrada = scanner.nextLine();
-
-        String[] valores = entrada.split(",");
-
-        double menor = Double.MAX_VALUE;
-
-        for (String valor : valores) {
-            double numero = Double.parseDouble(valor.trim());
-
-            if (numero < menor) {
-                menor = numero;
-            }
+    </main>
+
+    <!-- Prism.js Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <script>
+        // Definição dos algoritmos com códigos e lógica de execução
+        const algorithms = {
+            primo: {
+                id: 'primo',
+                title: 'Número Primo',
+                desc: 'Verifica se o número informado é primo (divisível apenas por 1 e ele mesmo).',
+                inputs: [
+                    { id: 'n', label: 'Digite um número inteiro:', placeholder: 'Ex: 29' }
+                ],
+                java: `public class Main {
+    public static boolean isPrimo(int n) {
+        if (n <= 1) return false;
+        for (int i = 2; i <= Math.sqrt(n); i++) {
+            if (n % i == 0) return false;
         }
-
-        int contador = 0;
-
-        System.out.println("Números válidos:");
-
-        for (String valor : valores) {
-
-            double numero =
-                Double.parseDouble(valor.trim());
-
-            if (numero >= menor && numero <= limite) {
-                System.out.println(numero);
-                contador++;
-            }
-        }
-
-        System.out.println("Total: " + contador);
+        return true;
     }
-}
-</pre>
-
-        </div>
-
-
-        <!-- 9 - SOMA JAVA -->
-        <div id="soma-java" class="algo-panel">
-
-            <h2>
-                Soma de Conjunto
-                <span class="language-badge java-badge">Java</span>
-            </h2>
-
-            <p class="description">
-                Calcula o somatório de uma sequência usando Java.
-            </p>
-
-            <div class="form-group">
-                <label>Números separados por vírgula:</label>
-                <input type="text"
-                       id="java-soma-input"
-                       placeholder="Ex: 5, 10, 15, 20">
-            </div>
-
-            <button class="action-btn java-action"
-                    onclick="calcJavaSoma()">
-                Executar Java
-            </button>
-
-            <div id="java-soma-result"
-                 class="result-box java-result">
-                Aguardando dados...
-            </div>
-
-            <div class="code-title">
-                Código Java correspondente:
-            </div>
-
-<pre>
-import java.util.*;
-
-public class Soma {
-
+    
     public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Digite os números: ");
-
-        String entrada = scanner.nextLine();
-
-        String[] valores = entrada.split(",");
-
-        double soma = 0;
-
-        for (String valor : valores) {
-
-            double numero =
-                Double.parseDouble(valor.trim());
-
-            soma += numero;
-        }
-
-        System.out.println("Soma: " + soma);
+        int numero = 29;
+        System.out.println("É primo? " + isPrimo(numero));
     }
-}
-</pre>
-
-        </div>
-
-
-        <!-- 10 - FATORIAL JAVA -->
-        <div id="fatorial-java" class="algo-panel">
-
-            <h2>
-                Fatorial
-                <span class="language-badge java-badge">Java</span>
-            </h2>
-
-            <p class="description">
-                Calcula o fatorial de um número usando Java.
-            </p>
-
-            <div class="form-group">
-                <label>Número N:</label>
-                <input type="number"
-                       id="java-fatorial-input"
-                       min="0"
-                       placeholder="Ex: 5">
-            </div>
-
-            <button class="action-btn java-action"
-                    onclick="calcJavaFatorial()">
-                Executar Java
-            </button>
-
-            <div id="java-fatorial-result"
-                 class="result-box java-result">
-                Aguardando dados...
-            </div>
-
-            <div class="code-title">
-                Código Java correspondente:
-            </div>
-
-<pre>
-import java.util.*;
-
-public class Fatorial {
-
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Digite N: ");
-
-        int n = scanner.nextInt();
-
-        long fatorial = 1;
-
-        for (int i = 2; i <= n; i++) {
-            fatorial *= i;
-        }
-
-        System.out.println(
-            n + "! = " + fatorial
-        );
+}`,
+                js: `function isPrimo(n) {
+    if (n <= 1) return false;
+    for (let i = 2; i <= Math.sqrt(n); i++) {
+        if (n % i === 0) return false;
     }
+    return true;
 }
-</pre>
 
-        </div>
-
-
-        <!-- 11 - FIBONACCI JAVA -->
-        <div id="fibonacci-java" class="algo-panel">
-
-            <h2>
-                Fibonacci
-                <span class="language-badge java-badge">Java</span>
-            </h2>
-
-            <p class="description">
-                Gera os N primeiros termos de Fibonacci usando Java.
-            </p>
-
-            <div class="form-group">
-                <label>Quantidade de termos:</label>
-                <input type="number"
-                       id="java-fibonacci-input"
-                       min="1"
-                       placeholder="Ex: 8">
-            </div>
-
-            <button class="action-btn java-action"
-                    onclick="calcJavaFibonacci()">
-                Executar Java
-            </button>
-
-            <div id="java-fibonacci-result"
-                 class="result-box java-result">
-                Aguardando dados...
-            </div>
-
-            <div class="code-title">
-                Código Java correspondente:
-            </div>
-
-<pre>
-import java.util.*;
-
-public class Fibonacci {
-
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Quantidade: ");
-
-        int n = scanner.nextInt();
-
-        long a = 0;
-        long b = 1;
-
-        for (int i = 0; i < n; i++) {
-
-            System.out.print(a);
-
-            if (i < n - 1) {
-                System.out.print(", ");
-            }
-
-            long proximo = a + b;
-
+const numero = 29;
+console.log("É primo?", isPrimo(numero));`,
+                run: (vals) => {
+                    const n = parseInt(vals.n);
+                    if (isNaN(n)) throw new Error("Entrada inválida. Digite um número.");
+                    if (n <= 1) return `${n} NÃO é primo.`;
+                    for (let i = 2; i <= Math.sqrt(n); i++) {
+                        if (n % i === 0) return `${n} NÃO é primo (divisível por ${i}).`;
+                    }
+                    return `${n} É um número primo!`;
+                }
+            },
+            fibonacci: {
+                id: 'fibonacci',
+                title: 'Fibonacci',
+                desc: 'Gera a sequência de Fibonacci até a quantidade de termos solicitada.',
+                inputs: [
+                    { id: 'termos', label: 'Quantidade de termos:', placeholder: 'Ex: 10' }
+                ],
+                java: `public class Main {
+    public static void printFibonacci(int termos) {
+        if (termos <= 0) return;
+        int a = 0, b = 1;
+        System.out.print(a);
+        for (int i = 1; i < termos; i++) {
+            System.out.print(", " + b);
+            int proximo = a + b;
             a = b;
             b = proximo;
         }
+        System.out.println();
     }
-}
-</pre>
-
-        </div>
-
-
-        <!-- 12 - MDC JAVA -->
-        <div id="mdc-java" class="algo-panel">
-
-            <h2>
-                Máximo Divisor Comum
-                <span class="language-badge java-badge">Java</span>
-            </h2>
-
-            <p class="description">
-                Calcula o MDC utilizando o Algoritmo de Euclides.
-            </p>
-
-            <div class="form-group">
-                <label>Primeiro número (A):</label>
-                <input type="number"
-                       id="java-mdc-a"
-                       placeholder="Ex: 48">
-            </div>
-
-            <div class="form-group">
-                <label>Segundo número (B):</label>
-                <input type="number"
-                       id="java-mdc-b"
-                       placeholder="Ex: 18">
-            </div>
-
-            <button class="action-btn java-action"
-                    onclick="calcJavaMDC()">
-                Executar Java
-            </button>
-
-            <div id="java-mdc-result"
-                 class="result-box java-result">
-                Aguardando dados...
-            </div>
-
-            <div class="code-title">
-                Código Java correspondente:
-            </div>
-
-<pre>
-import java.util.*;
-
-public class MDC {
-
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("A: ");
-        int a = scanner.nextInt();
-
-        System.out.print("B: ");
-        int b = scanner.nextInt();
-
-        a = Math.abs(a);
-        b = Math.abs(b);
-
+}`,
+                js: `function getFibonacci(termos) {
+    if (termos <= 0) return [];
+    if (termos === 1) return [0];
+    let seq = [0, 1];
+    for (let i = 2; i < termos; i++) {
+        seq.push(seq[i-1] + seq[i-2]);
+    }
+    return seq;
+}`,
+                run: (vals) => {
+                    const n = parseInt(vals.termos);
+                    if (isNaN(n) || n <= 0) throw new Error("Insira um número maior que 0.");
+                    if (n > 5000) throw new Error("Muitos termos solicitados. Limite: 5000.");
+                    if (n === 1) return "0";
+                    let seq = [0, 1];
+                    for (let i = 2; i < n; i++) {
+                        seq.push(seq[i-1] + seq[i-2]);
+                    }
+                    return seq.join(", ");
+                }
+            },
+            somatorio: {
+                id: 'somatorio',
+                title: 'Somatório',
+                desc: 'Calcula a soma total de uma lista de números.',
+                inputs: [
+                    { id: 'lista', label: 'Números separados por vírgula:', placeholder: 'Ex: 10.5, 20, 5' }
+                ],
+                java: `public class Main {
+    public static double calcularSomatorio(double[] numeros) {
+        double soma = 0;
+        for (double num : numeros) {
+            soma += num;
+        }
+        return soma;
+    }
+}`,
+                js: `function calcularSomatorio(numeros) {
+    let soma = 0;
+    for (let i = 0; i < numeros.length; i++) {
+        soma += numeros[i];
+    }
+    return soma;
+}`,
+                run: (vals) => {
+                    if (!vals.lista.trim()) throw new Error("Lista vazia.");
+                    const numeros = vals.lista.split(',').map(n => parseFloat(n.trim()));
+                    if (numeros.some(isNaN)) throw new Error("A lista deve conter apenas números.");
+                    const soma = numeros.reduce((acc, curr) => acc + curr, 0);
+                    return `Soma Total: ${soma}`;
+                }
+            },
+            mdc: {
+                id: 'mdc',
+                title: 'MDC (Máx. Divisor Comum)',
+                desc: 'Encontra o maior divisor comum entre dois números inteiros (Algoritmo de Euclides).',
+                inputs: [
+                    { id: 'num1', label: 'Primeiro Valor (A):', placeholder: 'Ex: 48' },
+                    { id: 'num2', label: 'Segundo Valor (B):', placeholder: 'Ex: 18' }
+                ],
+                java: `public class Main {
+    public static int calcularMDC(int a, int b) {
         while (b != 0) {
-
             int temp = b;
-
             b = a % b;
-
             a = temp;
         }
-
-        System.out.println("MDC = " + a);
+        return a;
     }
-}
-</pre>
-
-        </div>
-
-
-        <!-- 13 - PRIMO JAVA -->
-        <div id="primo-java" class="algo-panel">
-
-            <h2>
-                Número Primo
-                <span class="language-badge java-badge">Java</span>
-            </h2>
-
-            <p class="description">
-                Verifica se um número inteiro é primo usando Java.
-            </p>
-
-            <div class="form-group">
-                <label>Número N:</label>
-                <input type="number"
-                       id="java-primo-input"
-                       min="1"
-                       placeholder="Ex: 29">
-            </div>
-
-            <button class="action-btn java-action"
-                    onclick="calcJavaPrimo()">
-                Executar Java
-            </button>
-
-            <div id="java-primo-result"
-                 class="result-box java-result">
-                Aguardando dados...
-            </div>
-
-            <div class="code-title">
-                Código Java correspondente:
-            </div>
-
-<pre>
-import java.util.*;
-
-public class Primo {
-
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Digite N: ");
-
-        int n = scanner.nextInt();
-
-        boolean primo = true;
-
-        if (n <= 1) {
-            primo = false;
-        }
-
-        for (int i = 2; i <= Math.sqrt(n); i++) {
-
-            if (n % i == 0) {
-                primo = false;
-                break;
+}`,
+                js: `function calcularMDC(a, b) {
+    while (b !== 0) {
+        let temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}`,
+                run: (vals) => {
+                    let a = parseInt(vals.num1);
+                    let b = parseInt(vals.num2);
+                    if (isNaN(a) || isNaN(b)) throw new Error("Forneça dois números válidos.");
+                    
+                    const origA = a, origB = b;
+                    while (b !== 0) {
+                        let temp = b;
+                        b = a % b;
+                        a = temp;
+                    }
+                    return `MDC(${origA}, ${origB}) = ${Math.abs(a)}`;
+                }
+            },
+            contagem: {
+                id: 'contagem',
+                title: 'Contagem de Inteiros',
+                desc: 'Verifica uma lista e conta quantos elementos são números inteiros válidos.',
+                inputs: [
+                    { id: 'lista', label: 'Valores separados por vírgula:', placeholder: 'Ex: 1, text, 4.5, 9' }
+                ],
+                java: `public class Main {
+    public static int contarInteiros(String[] valores) {
+        int contagem = 0;
+        for (String v : valores) {
+            try {
+                Integer.parseInt(v.trim());
+                contagem++;
+            } catch (NumberFormatException e) {
+                // Não é um inteiro válido
             }
         }
-
-        if (primo) {
-            System.out.println(
-                n + " é primo."
-            );
-        } else {
-            System.out.println(
-                n + " não é primo."
-            );
+        return contagem;
+    }
+}`,
+                js: `function contarInteiros(valores) {
+    let contagem = 0;
+    for (let val of valores) {
+        val = val.trim();
+        let num = Number(val);
+        if (val !== '' && !isNaN(num) && Number.isInteger(num)) {
+            contagem++;
         }
     }
-}
-</pre>
-
-        </div>
-
-
-        <!-- 14 - QUICKSORT JAVA -->
-        <div id="quicksort-java" class="algo-panel">
-
-            <h2>
-                Ordenação - Quicksort
-                <span class="language-badge java-badge">Java</span>
-            </h2>
-
-            <p class="description">
-                Ordena uma lista numérica usando o algoritmo Quicksort.
-            </p>
-
-            <div class="form-group">
-                <label>Números separados por vírgula:</label>
-                <input type="text"
-                       id="java-quicksort-input"
-                       placeholder="Ex: 34, 7, 23, 32, 5, 62">
-            </div>
-
-            <button class="action-btn java-action"
-                    onclick="calcJavaQuicksort()">
-                Executar Java
-            </button>
-
-            <div id="java-quicksort-result"
-                 class="result-box java-result">
-                Aguardando dados...
-            </div>
-
-            <div class="code-title">
-                Código Java correspondente:
-            </div>
-
-<pre>
-import java.util.*;
-
-public class Quicksort {
-
-    public static void quicksort(
-        int[] array,
-        int inicio,
-        int fim
-    ) {
-
-        if (inicio < fim) {
-
-            int pivo = array[fim];
-
-            int i = inicio - 1;
-
-            for (int j = inicio; j < fim; j++) {
-
-                if (array[j] <= pivo) {
-
-                    i++;
-
-                    int temp = array[i];
-
-                    array[i] = array[j];
-
-                    array[j] = temp;
+    return contagem;
+}`,
+                run: (vals) => {
+                    if (!vals.lista.trim()) throw new Error("Lista vazia.");
+                    const valores = vals.lista.split(',');
+                    let contagem = 0;
+                    for (let val of valores) {
+                        val = val.trim();
+                        let num = Number(val);
+                        if (val !== '' && !isNaN(num) && Number.isInteger(num)) {
+                            contagem++;
+                        }
+                    }
+                    return `Encontrados ${contagem} número(s) inteiro(s).`;
+                }
+            },
+            ordenamento: {
+                id: 'ordenamento',
+                title: 'Ordenamento (Bubble Sort)',
+                desc: 'Ordena um conjunto numérico em ordem crescente utilizando o método da bolha.',
+                inputs: [
+                    { id: 'lista', label: 'Lista de números desordenada:', placeholder: 'Ex: 5, 1, 4, 2, 8' }
+                ],
+                java: `public class Main {
+    public static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    // Swap
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
                 }
             }
-
-            int temp = array[i + 1];
-
-            array[i + 1] = array[fim];
-
-            array[fim] = temp;
-
-            int indicePivo = i + 1;
-
-            quicksort(
-                array,
-                inicio,
-                indicePivo - 1
-            );
-
-            quicksort(
-                array,
-                indicePivo + 1,
-                fim
-            );
         }
     }
-
-    public static void main(String[] args) {
-
-        int[] numeros = {
-            34, 7, 23, 32, 5, 62
+}`,
+                js: `function bubbleSort(arr) {
+    let n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Swap
+                let temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+    return arr;
+}`,
+                run: (vals) => {
+                    if (!vals.lista.trim()) throw new Error("Lista vazia.");
+                    const arr = vals.lista.split(',').map(n => parseFloat(n.trim()));
+                    if (arr.some(isNaN)) throw new Error("A lista deve conter apenas números.");
+                    
+                    let n = arr.length;
+                    for (let i = 0; i < n - 1; i++) {
+                        for (let j = 0; j < n - i - 1; j++) {
+                            if (arr[j] > arr[j + 1]) {
+                                let temp = arr[j];
+                                arr[j] = arr[j + 1];
+                                arr[j + 1] = temp;
+                            }
+                        }
+                    }
+                    return `[ ${arr.join(', ')} ]`;
+                }
+            }
         };
 
-        quicksort(
-            numeros,
-            0,
-            numeros.length - 1
-        );
+        
+        let currentAlgo = null;
 
-        System.out.println(
-            Arrays.toString(numeros)
-        );
-    }
-}
-</pre>
+        // Elementos DOM
+        const sidebarNav = document.getElementById('sidebar-nav');
+        const headerAlgoName = document.getElementById('header-algo-name');
+        const tabFilename = document.getElementById('tab-filename');
+        const codeDisplay = document.getElementById('code-display');
+        const langSelect = document.getElementById('lang-select');
+        const dynamicInputs = document.getElementById('dynamic-inputs');
+        const panelDesc = document.getElementById('panel-desc');
+        const btnExecute = document.getElementById('btn-execute');
+        const terminalOutput = document.getElementById('terminal-output');
+        
+        // Elementos Mobile
+        const sidebar = document.querySelector('aside');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+        const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
 
-        </div>
-
-    </main>
-</div>
-
-
-<script>
-
-    /* =========================================================
-       CONTROLE DAS ABAS
-    ========================================================= */
-
-    function showAlgo(id, btn) {
-
-        document
-            .querySelectorAll('.algo-panel')
-            .forEach(panel =>
-                panel.classList.remove('active')
-            );
-
-        document
-            .querySelectorAll('.nav-btn')
-            .forEach(button =>
-                button.classList.remove('active')
-            );
-
-        document
-            .getElementById(id)
-            .classList.add('active');
-
-        btn.classList.add('active');
-    }
-
-
-    /* =========================================================
-       JAVASCRIPT
-    ========================================================= */
-
-    // 1. CONTAGEM
-    function calcContagem() {
-
-        const limite =
-            parseFloat(
-                document.getElementById(
-                    'contagem-limite'
-                ).value
-            );
-
-        const raw =
-            document.getElementById(
-                'contagem-input'
-            ).value;
-
-        if (isNaN(limite)) {
-            return alert(
-                'Por favor, digite um limite válido.'
-            );
+        // Inicializar Menu Lateral
+        function initNav() {
+            Object.values(algorithms).forEach(algo => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors nav-btn flex items-center gap-2';
+                btn.dataset.id = algo.id;
+                
+                // Ícone genérico de arquivo
+                btn.innerHTML = `
+                    <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
+                    <span class="truncate">${algo.title}</span>
+                `;
+                
+                btn.addEventListener('click', () => {
+                    loadAlgorithm(algo.id);
+                    if (window.innerWidth < 768) toggleSidebar();
+                });
+                sidebarNav.appendChild(btn);
+            });
         }
 
-        const nums =
-            raw
-                .split(',')
-                .map(n => parseFloat(n.trim()))
-                .filter(n => !isNaN(n));
-
-        if (!nums.length) {
-            return alert(
-                'Insira valores numéricos válidos.'
-            );
-        }
-
-        const menor = Math.min(...nums);
-
-        const validados =
-            nums.filter(
-                n => n >= menor && n <= limite
-            );
-
-        document.getElementById(
-            'contagem-result'
-        ).innerText =
-            `Menor valor digitado: ${menor}\n` +
-            `Limite estabelecido: ${limite}\n` +
-            `--------------------------\n` +
-            `Números que se encaixam: [${validados.join(', ')}]\n` +
-            `Contagem total: ${validados.length} número(s)`;
-    }
-
-
-    // 2. SOMA
-    function calcSoma() {
-
-        const raw =
-            document.getElementById(
-                'soma-input'
-            ).value;
-
-        const nums =
-            raw
-                .split(',')
-                .map(n => parseFloat(n.trim()))
-                .filter(n => !isNaN(n));
-
-        if (!nums.length) {
-            return alert(
-                'Insira números válidos.'
-            );
-        }
-
-        const total =
-            nums.reduce(
-                (acc, curr) => acc + curr,
-                0
-            );
-
-        document.getElementById(
-            'soma-result'
-        ).innerText =
-            `Valores: [${nums.join(', ')}]\n` +
-            `Soma Total: ${total}`;
-    }
-
-
-    // 3. FATORIAL
-    function calcFatorial() {
-
-        const n =
-            parseInt(
-                document.getElementById(
-                    'fatorial-input'
-                ).value
-            );
-
-        if (isNaN(n) || n < 0) {
-            return alert(
-                'Insira um número inteiro não-negativo.'
-            );
-        }
-
-        let fat = 1n;
-
-        for (
-            let i = 2n;
-            i <= BigInt(n);
-            i++
-        ) {
-            fat *= i;
-        }
-
-        document.getElementById(
-            'fatorial-result'
-        ).innerText =
-            `${n}! = ${fat}`;
-    }
-
-
-    // 4. FIBONACCI
-    function calcFibonacci() {
-
-        const n =
-            parseInt(
-                document.getElementById(
-                    'fibonacci-input'
-                ).value
-            );
-
-        if (isNaN(n) || n <= 0) {
-            return alert(
-                'Insira um número maior que 0.'
-            );
-        }
-
-        let seq = [];
-
-        if (n >= 1) seq.push(0);
-
-        if (n >= 2) seq.push(1);
-
-        for (let i = 2; i < n; i++) {
-
-            seq.push(
-                seq[i - 1] +
-                seq[i - 2]
-            );
-        }
-
-        document.getElementById(
-            'fibonacci-result'
-        ).innerText =
-            `Primeiros ${n} termos:\n` +
-            seq.join(', ');
-    }
-
-
-    // 5. MDC
-    function calcMDC() {
-
-        let a =
-            parseInt(
-                document.getElementById(
-                    'mdc-a'
-                ).value
-            );
-
-        let b =
-            parseInt(
-                document.getElementById(
-                    'mdc-b'
-                ).value
-            );
-
-        if (isNaN(a) || isNaN(b)) {
-            return alert(
-                'Insira dois números inteiros válidos.'
-            );
-        }
-
-        const origA = a;
-        const origB = b;
-
-        a = Math.abs(a);
-        b = Math.abs(b);
-
-        while (b !== 0) {
-
-            const temp = b;
-
-            b = a % b;
-
-            a = temp;
-        }
-
-        document.getElementById(
-            'mdc-result'
-        ).innerText =
-            `MDC(${origA}, ${origB}) = ${a}`;
-    }
-
-
-    // 6. PRIMO
-    function calcPrimo() {
-
-        const n =
-            parseInt(
-                document.getElementById(
-                    'primo-input'
-                ).value
-            );
-
-        if (isNaN(n) || n <= 0) {
-            return alert(
-                'Insira um número maior que 0.'
-            );
-        }
-
-        if (n <= 1) {
-
-            document.getElementById(
-                'primo-result'
-            ).innerText =
-                `${n} NÃO é um número primo.`;
-
-            return;
-        }
-
-        let isPrime = true;
-
-        for (
-            let i = 2;
-            i <= Math.sqrt(n);
-            i++
-        ) {
-
-            if (n % i === 0) {
-
-                isPrime = false;
-
-                break;
-            }
-        }
-
-        document.getElementById(
-            'primo-result'
-        ).innerText =
-            isPrime
-                ? `${n} É um número primo!`
-                : `${n} NÃO é um número primo.`;
-    }
-
-
-    // 7. QUICKSORT
-    function calcQuicksort() {
-
-        const raw =
-            document.getElementById(
-                'quicksort-input'
-            ).value;
-
-        const nums =
-            raw
-                .split(',')
-                .map(n => parseFloat(n.trim()))
-                .filter(n => !isNaN(n));
-
-        if (!nums.length) {
-            return alert(
-                'Insira números válidos.'
-            );
-        }
-
-        function quicksort(arr) {
-
-            if (arr.length <= 1) {
-                return arr;
-            }
-
-            const pivot =
-                arr[
-                    Math.floor(arr.length / 2)
-                ];
-
-            const left =
-                arr.filter(x => x < pivot);
-
-            const middle =
-                arr.filter(x => x === pivot);
-
-            const right =
-                arr.filter(x => x > pivot);
-
-            return [
-                ...quicksort(left),
-                ...middle,
-                ...quicksort(right)
-            ];
-        }
-
-        const sorted =
-            quicksort(nums);
-
-        document.getElementById(
-            'quicksort-result'
-        ).innerText =
-            `Original: [${nums.join(', ')}]\n` +
-            `Ordenado: [${sorted.join(', ')}]`;
-    }
-
-
-    /* =========================================================
-       JAVA - SIMULAÇÕES PARA FUNCIONAR NO NAVEGADOR
-    ========================================================= */
-
-    // 8. CONTAGEM JAVA
-    function calcJavaContagem() {
-
-        const limite =
-            parseFloat(
-                document.getElementById(
-                    'java-contagem-limite'
-                ).value
-            );
-
-        const raw =
-            document.getElementById(
-                'java-contagem-input'
-            ).value;
-
-        if (isNaN(limite)) {
-            return alert(
-                'Digite um limite válido.'
-            );
-        }
-
-        const nums =
-            raw
-                .split(',')
-                .map(n => parseFloat(n.trim()))
-                .filter(n => !isNaN(n));
-
-        if (!nums.length) {
-            return alert(
-                'Insira valores válidos.'
-            );
-        }
-
-        const menor =
-            Math.min(...nums);
-
-        const validados =
-            nums.filter(
-                n => n >= menor && n <= limite
-            );
-
-        document.getElementById(
-            'java-contagem-result'
-        ).innerText =
-            `Simulação da versão Java\n\n` +
-            `Menor valor: ${menor}\n` +
-            `Limite: ${limite}\n` +
-            `Números válidos: [${validados.join(', ')}]\n` +
-            `Total: ${validados.length}`;
-    }
-
-
-    // 9. SOMA JAVA
-    function calcJavaSoma() {
-
-        const raw =
-            document.getElementById(
-                'java-soma-input'
-            ).value;
-
-        const nums =
-            raw
-                .split(',')
-                .map(n => parseFloat(n.trim()))
-                .filter(n => !isNaN(n));
-
-        if (!nums.length) {
-            return alert(
-                'Insira números válidos.'
-            );
-        }
-
-        let soma = 0;
-
-        for (const numero of nums) {
-            soma += numero;
-        }
-
-        document.getElementById(
-            'java-soma-result'
-        ).innerText =
-            `Simulação da versão Java\n\n` +
-            `Valores: [${nums.join(', ')}]\n` +
-            `Soma: ${soma}`;
-    }
-
-
-    // 10. FATORIAL JAVA
-    function calcJavaFatorial() {
-
-        const n =
-            parseInt(
-                document.getElementById(
-                    'java-fatorial-input'
-                ).value
-            );
-
-        if (isNaN(n) || n < 0) {
-            return alert(
-                'Digite um número inteiro não-negativo.'
-            );
-        }
-
-        let fat = 1n;
-
-        for (
-            let i = 2n;
-            i <= BigInt(n);
-            i++
-        ) {
-            fat *= i;
-        }
-
-        document.getElementById(
-            'java-fatorial-result'
-        ).innerText =
-            `Simulação da versão Java\n\n` +
-            `${n}! = ${fat}`;
-    }
-
-
-    // 11. FIBONACCI JAVA
-    function calcJavaFibonacci() {
-
-        const n =
-            parseInt(
-                document.getElementById(
-                    'java-fibonacci-input'
-                ).value
-            );
-
-        if (isNaN(n) || n <= 0) {
-            return alert(
-                'Digite um número maior que 0.'
-            );
-        }
-
-        let a = 0;
-        let b = 1;
-
-        const seq = [];
-
-        for (let i = 0; i < n; i++) {
-
-            seq.push(a);
-
-            const proximo = a + b;
-
-            a = b;
-
-            b = proximo;
-        }
-
-        document.getElementById(
-            'java-fibonacci-result'
-        ).innerText =
-            `Simulação da versão Java\n\n` +
-            `Primeiros ${n} termos:\n` +
-            seq.join(', ');
-    }
-
-
-    // 12. MDC JAVA
-    function calcJavaMDC() {
-
-        let a =
-            parseInt(
-                document.getElementById(
-                    'java-mdc-a'
-                ).value
-            );
-
-        let b =
-            parseInt(
-                document.getElementById(
-                    'java-mdc-b'
-                ).value
-            );
-
-        if (isNaN(a) || isNaN(b)) {
-            return alert(
-                'Digite dois números válidos.'
-            );
-        }
-
-        const origA = a;
-        const origB = b;
-
-        a = Math.abs(a);
-        b = Math.abs(b);
-
-        while (b !== 0) {
-
-            const temp = b;
-
-            b = a % b;
-
-            a = temp;
-        }
-
-        document.getElementById(
-            'java-mdc-result'
-        ).innerText =
-            `Simulação da versão Java\n\n` +
-            `MDC(${origA}, ${origB}) = ${a}`;
-    }
-
-
-    // 13. PRIMO JAVA
-    function calcJavaPrimo() {
-
-        const n =
-            parseInt(
-                document.getElementById(
-                    'java-primo-input'
-                ).value
-            );
-
-        if (isNaN(n) || n <= 0) {
-            return alert(
-                'Digite um número maior que 0.'
-            );
-        }
-
-        let primo = true;
-
-        if (n <= 1) {
-            primo = false;
-        }
-
-        for (
-            let i = 2;
-            i <= Math.sqrt(n);
-            i++
-        ) {
-
-            if (n % i === 0) {
-
-                primo = false;
-
-                break;
-            }
-        }
-
-        document.getElementById(
-            'java-primo-result'
-        ).innerText =
-            `Simulação da versão Java\n\n` +
-            (
-                primo
-                    ? `${n} é primo.`
-                    : `${n} não é primo.`
-            );
-    }
-
-
-    // 14. QUICKSORT JAVA
-    function calcJavaQuicksort() {
-
-        const raw =
-            document.getElementById(
-                'java-quicksort-input'
-            ).value;
-
-        const nums =
-            raw
-                .split(',')
-                .map(n => parseFloat(n.trim()))
-                .filter(n => !isNaN(n));
-
-        if (!nums.length) {
-            return alert(
-                'Insira números válidos.'
-            );
-        }
-
-        function quicksort(arr) {
-
-            if (arr.length <= 1) {
-                return arr;
-            }
-
-            const pivot =
-                arr[arr.length - 1];
-
-            const left = [];
-            const right = [];
-            const middle = [];
-
-            for (const numero of arr) {
-
-                if (numero < pivot) {
-
-                    left.push(numero);
-
-                } else if (numero > pivot) {
-
-                    right.push(numero);
-
+        // Carregar Algoritmo
+        function loadAlgorithm(id) {
+            currentAlgo = algorithms[id];
+            const lang = langSelect.value;
+            
+            // Destacar botão ativo
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.dataset.id === id) {
+                    btn.classList.add('bg-blue-600/20', 'text-blue-400', 'font-medium');
+                    btn.classList.remove('text-gray-300', 'hover:bg-gray-700');
+                    btn.querySelector('svg').classList.replace('text-gray-500', 'text-blue-400');
                 } else {
-
-                    middle.push(numero);
+                    btn.classList.remove('bg-blue-600/20', 'text-blue-400', 'font-medium');
+                    btn.classList.add('text-gray-300', 'hover:bg-gray-700');
+                    btn.querySelector('svg').classList.replace('text-blue-400', 'text-gray-500');
                 }
-            }
+            });
 
-            return [
-                ...quicksort(left),
-                ...middle,
-                ...quicksort(right)
-            ];
+            // Atualizar Textos
+            headerAlgoName.textContent = `${id}.${lang === 'java' ? 'java' : 'js'}`;
+            tabFilename.textContent = `Algoritmo_${currentAlgo.id.toUpperCase()}.${lang === 'java' ? 'java' : 'js'}`;
+            panelDesc.textContent = currentAlgo.desc;
+            
+            // Atualizar Código
+            updateCodeView();
+
+            // Gerar Inputs Dinâmicos
+            dynamicInputs.innerHTML = '';
+            currentAlgo.inputs.forEach(inputDef => {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = `
+                    <label class="block text-xs font-medium text-gray-400 mb-1" for="input-${inputDef.id}">${inputDef.label}</label>
+                    <input type="text" id="input-${inputDef.id}" data-key="${inputDef.id}" placeholder="${inputDef.placeholder}" 
+                           class="algo-input w-full bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors" autocomplete="off">
+                `;
+                dynamicInputs.appendChild(wrapper);
+                
+                // Executar ao dar Enter
+                wrapper.querySelector('input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') btnExecute.click();
+                });
+            });
+
+            btnExecute.disabled = false;
+            
+            // Auto focus no primeiro input
+            setTimeout(() => {
+                const firstInput = document.querySelector('.algo-input');
+                if(firstInput) firstInput.focus();
+            }, 100);
         }
 
-        const sorted =
-            quicksort(nums);
+        // Atualizar Visualização de Código baseado no Dropdown
+        function updateCodeView() {
+            if (!currentAlgo) return;
+            const lang = langSelect.value;
+            
+            // Atualiza extensões nos títulos
+            headerAlgoName.textContent = `${currentAlgo.id}.${lang === 'java' ? 'java' : 'js'}`;
+            tabFilename.textContent = `Algoritmo_${currentAlgo.id.toUpperCase()}.${lang === 'java' ? 'java' : 'js'}`;
 
-        document.getElementById(
-            'java-quicksort-result'
-        ).innerText =
-            `Simulação da versão Java\n\n` +
-            `Original: [${nums.join(', ')}]\n` +
-            `Ordenado: [${sorted.join(', ')}]`;
-    }
+            // Define código e classe do Prism
+            codeDisplay.textContent = currentAlgo[lang];
+            codeDisplay.className = `language-${lang === 'java' ? 'java' : 'javascript'}`;
+            
+            // Re-aplicar Highlighting
+            Prism.highlightElement(codeDisplay);
+        }
 
-</script>
+        
+        // Função para escrever no terminal
+        function logToTerminal(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = 'mb-1 leading-relaxed';
+            
+            const time = new Date().toLocaleTimeString('pt-BR', { hour12: false });
+            let colorClass = 'text-gray-300';
+            
+            if (type === 'success') colorClass = 'text-green-400';
+            else if (type === 'error') colorClass = 'text-red-400';
+            else if (type === 'system-java') colorClass = 'text-yellow-400 font-semibold';
+            else if (type === 'system-js') colorClass = 'text-blue-400 font-semibold';
+            
+            div.innerHTML = `<span class="text-gray-600 mr-2">[${time}]</span><span class="${colorClass}">${message}</span>`;
+            terminalOutput.appendChild(div);
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
 
+        // Evento de Mudança de Linguagem
+        langSelect.addEventListener('change', updateCodeView);
+
+        // Botão de Executar
+        btnExecute.addEventListener('click', () => {
+            if (!currentAlgo) return;
+            
+            const lang = langSelect.value;
+            const inputs = document.querySelectorAll('.algo-input');
+            const inputValues = {};
+            let hasEmpty = false;
+            
+            inputs.forEach(input => {
+                inputValues[input.dataset.key] = input.value;
+                if (!input.value.trim()) hasEmpty = true;
+            });
+
+            // O TRUQUE DA APRESENTAÇÃO ACONTECE AQUI:
+            // Exibimos a mensagem fingindo que estamos compilando Java, 
+            // mas o JS executa a lógica por trás.
+            if (lang === 'java') {
+                logToTerminal(`[Compilando e Simulando execução na JVM...] -> Arquivo: ${currentAlgo.id}.java`, 'system-java');
+            } else {
+                logToTerminal(`[Executando nativamente no Navegador...] -> Engine: V8 / JS`, 'system-js');
+            }
+
+            // Desabilita botão rapidamente para efeito visual
+            btnExecute.disabled = true;
+            btnExecute.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processando...`;
+
+            // Simulando um delay de execução (efeito de apresentação)
+            setTimeout(() => {
+                try {
+                    const resultado = currentAlgo.run(inputValues);
+                    logToTerminal(`> ${resultado}`, 'success');
+                } catch (error) {
+                    logToTerminal(`> Erro de Execução: ${error.message}`, 'error');
+                } finally {
+                    btnExecute.disabled = false;
+                    btnExecute.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Executar Algoritmo`;
+                    
+                    // Adiciona o cursor piscando ao final
+                    const cursorDiv = document.createElement('div');
+                    cursorDiv.innerHTML = `<span class="text-green-500 font-bold">>_</span>`;
+                    terminalOutput.appendChild(cursorDiv);
+                    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                }
+            }, 600); // 600ms delay for visual feedback
+        });
+
+        // Controles Mobile Sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle('hidden');
+            mobileOverlay.classList.toggle('hidden');
+        }
+        btnToggleSidebar.addEventListener('click', toggleSidebar);
+        mobileOverlay.addEventListener('click', toggleSidebar);
+
+        // Inicialização
+        window.addEventListener('DOMContentLoaded', () => {
+            initNav();
+            loadAlgorithm('primo'); // Inicia com o primeiro algoritmo selecionado
+        });
+
+    </script>
 </body>
 </html>
