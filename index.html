@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmos Fundamentais</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            max-width: 1200px;
+            margin: 2rem auto;
+            width: 90%;
+            gap: 2rem;
+        }
+
+        nav {
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent);
+            background-color: #26334d;
+        }
+
+        .nav-btn.active {
+            background-color: var(--accent);
+            color: #000;
+            font-weight: bold;
+            border-color: var(--accent);
+        }
+
+        main {
+            flex: 1;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .algo-panel {
+            display: none;
+        }
+
+        .algo-panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        button.action-btn {
+            background-color: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button.action-btn:hover {
+            background-color: var(--accent-hover);
+            color: #fff;
+        }
+
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 6px;
+            background-color: #0f172a;
+            border-left: 4px solid var(--accent);
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            nav {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Algoritmos Fundamentais</h1>
+    </header>
+
+    <div class="container">
+        <nav id="menu">
+            <button class="nav-btn active" onclick="showAlgo('contagem', this)">1. Contagem</button>
+            <button class="nav-btn" onclick="showAlgo('soma', this)">2. Soma de Conjunto</button>
+            <button class="nav-btn" onclick="showAlgo('fatorial', this)">3. Fatorial</button>
+            <button class="nav-btn" onclick="showAlgo('fibonacci', this)">4. Fibonacci</button>
+            <button class="nav-btn" onclick="showAlgo('mdc', this)">5. MDC</button>
+            <button class="nav-btn" onclick="showAlgo('primo', this)">6. Número Primo</button>
+            <button class="nav-btn" onclick="showAlgo('quicksort', this)">7. Ordenação (Quicksort)</button>
+        </nav>
+
+        <main>
+            <!-- Contagem (CORRIGIDO) -->
+            <div id="contagem" class="algo-panel active">
+                <h2>Contagem</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Analisa uma sequência de números e conta quais deles estão no intervalo entre o menor valor digitado e o número limite que você escolher.</p>
+                
+                <div class="form-group">
+                    <label>Número Limite (Teto):</label>
+                    <input type="number" id="contagem-limite" placeholder="Ex: 50">
+                </div>
+                
+                <div class="form-group">
+                    <label>Valores a serem avaliados (separados por vírgula):</label>
+                    <input type="text" id="contagem-input" placeholder="Ex: 10, 25, 60, 5, 80, 42">
+                </div>
+                
+                <button class="action-btn" onclick="calcContagem()">Contar e Filtrar</button>
+                <div id="contagem-result" class="result-box">Aguardando dados...</div>
+            </div>
+
+            <!-- Soma -->
+            <div id="soma" class="algo-panel">
+                <h2>Soma de Conjunto</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Calcula o somatório de uma sequência de números.</p>
+                <div class="form-group">
+                    <label>Números (separados por vírgula):</label>
+                    <input type="text" id="soma-input" placeholder="Ex: 5, 10, 15, 20">
+                </div>
+                <button class="action-btn" onclick="calcSoma()">Calcular Soma</button>
+                <div id="soma-result" class="result-box">Aguardando dados...</div>
+            </div>
+
+            <!-- Fatorial -->
+            <div id="fatorial" class="algo-panel">
+                <h2>Fatorial</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Calcula o fatorial de um número inteiro positivo (N!).</p>
+                <div class="form-group">
+                    <label>Número N:</label>
+                    <input type="number" id="fatorial-input" min="0" placeholder="Ex: 5">
+                </div>
+                <button class="action-btn" onclick="calcFatorial()">Calcular Fatorial</button>
+                <div id="fatorial-result" class="result-box">Aguardando dados...</div>
+            </div>
+
+            <!-- Fibonacci -->
+            <div id="fibonacci" class="algo-panel">
+                <h2>Fibonacci</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Gera os N primeiros termos da sequência de Fibonacci.</p>
+                <div class="form-group">
+                    <label>Quantidade de termos (N):</label>
+                    <input type="number" id="fibonacci-input" min="1" placeholder="Ex: 8">
+                </div>
+                <button class="action-btn" onclick="calcFibonacci()">Gerar Sequência</button>
+                <div id="fibonacci-result" class="result-box">Aguardando dados...</div>
+            </div>
+
+            <!-- MDC -->
+            <div id="mdc" class="algo-panel">
+                <h2>Máximo Divisor Comum (MDC)</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Calcula o MDC de dois números pelo Algoritmo de Euclides.</p>
+                <div class="form-group">
+                    <label>Primeiro número (A):</label>
+                    <input type="number" id="mdc-a" placeholder="Ex: 48">
+                </div>
+                <div class="form-group">
+                    <label>Segundo número (B):</label>
+                    <input type="number" id="mdc-b" placeholder="Ex: 18">
+                </div>
+                <button class="action-btn" onclick="calcMDC()">Calcular MDC</button>
+                <div id="mdc-result" class="result-box">Aguardando dados...</div>
+            </div>
+
+            <!-- Primo -->
+            <div id="primo" class="algo-panel">
+                <h2>Número Primo</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Verifica se um número inteiro é primo.</p>
+                <div class="form-group">
+                    <label>Número N:</label>
+                    <input type="number" id="primo-input" min="1" placeholder="Ex: 29">
+                </div>
+                <button class="action-btn" onclick="calcPrimo()">Verificar</button>
+                <div id="primo-result" class="result-box">Aguardando dados...</div>
+            </div>
+
+            <!-- Quicksort -->
+            <div id="quicksort" class="algo-panel">
+                <h2>Ordenação (Quicksort)</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Ordena uma lista numérica em ordem crescente.</p>
+                <div class="form-group">
+                    <label>Números (separados por vírgula):</label>
+                    <input type="text" id="quicksort-input" placeholder="Ex: 34, 7, 23, 32, 5, 62">
+                </div>
+                <button class="action-btn" onclick="calcQuicksort()">Ordenar Lista</button>
+                <div id="quicksort-result" class="result-box">Aguardando dados...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function showAlgo(id, btn) {
+            document.querySelectorAll('.algo-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // 1. Contagem (CORRIGIDO)
+        function calcContagem() {
+            const limite = parseFloat(document.getElementById('contagem-limite').value);
+            const raw = document.getElementById('contagem-input').value;
+            
+            if (isNaN(limite)) {
+                return alert('Por favor, digite um número limite válido.');
+            }
+
+            const nums = raw.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+            
+            if (!nums.length) {
+                return alert('Por favor, insira valores numéricos válidos na lista.');
+            }
+
+            // Descobre qual é o menor número da lista digitada
+            const menor = Math.min(...nums);
+            
+            // Filtra os números que estão entre o menor valor e o limite
+            const validados = nums.filter(n => n >= menor && n <= limite);
+
+            document.getElementById('contagem-result').innerText = 
+                `Menor valor digitado: ${menor}\n` +
+                `Limite estabelecido: ${limite}\n` +
+                `--------------------------\n` +
+                `Números que se encaixam: [${validados.join(', ')}]\n` +
+                `Contagem total: ${validados.length} número(s)`;
+        }
+
+        // 2. Soma
+        function calcSoma() {
+            const raw = document.getElementById('soma-input').value;
+            const nums = raw.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+            if (!nums.length) return alert('Insira números válidos.');
+
+            const total = nums.reduce((acc, curr) => acc + curr, 0);
+            document.getElementById('soma-result').innerText = `Valores: [${nums.join(', ')}]\nSoma Total: ${total}`;
+        }
+
+        // 3. Fatorial
+        function calcFatorial() {
+            const n = parseInt(document.getElementById('fatorial-input').value);
+            if (isNaN(n) || n < 0) return alert('Insira um número inteiro não-negativo.');
+
+            let fat = 1n;
+            for (let i = 2n; i <= BigInt(n); i++) {
+                fat *= i;
+            }
+            document.getElementById('fatorial-result').innerText = `${n}! = ${fat.toString()}`;
+        }
+
+        // 4. Fibonacci
+        function calcFibonacci() {
+            const n = parseInt(document.getElementById('fibonacci-input').value);
+            if (isNaN(n) || n <= 0) return alert('Insira um número maior que 0.');
+
+            let seq = [];
+            if (n >= 1) seq.push(0);
+            if (n >= 2) seq.push(1);
+
+            for (let i = 2; i < n; i++) {
+                seq.push(seq[i - 1] + seq[i - 2]);
+            }
+
+            document.getElementById('fibonacci-result').innerText = `Primeiros ${n} termos:\n${seq.join(', ')}`;
+        }
+
+        // 5. MDC
+        function calcMDC() {
+            let a = parseInt(document.getElementById('mdc-a').value);
+            let b = parseInt(document.getElementById('mdc-b').value);
+
+            if (isNaN(a) || isNaN(b)) return alert('Insira dois números inteiros válidos.');
+
+            const origA = a, origB = b;
+            a = Math.abs(a);
+            b = Math.abs(b);
+
+            while (b) {
+                let temp = b;
+                b = a % b;
+                a = temp;
+            }
+
+            document.getElementById('mdc-result').innerText = `MDC(${origA}, ${origB}) = ${a}`;
+        }
+
+        // 6. Número Primo
+        function calcPrimo() {
+            const n = parseInt(document.getElementById('primo-input').value);
+            if (isNaN(n) || n <= 0) return alert('Insira um número maior que 0.');
+
+            if (n <= 1) {
+                document.getElementById('primo-result').innerText = `${n} NÃO é um número primo.`;
+                return;
+            }
+
+            let isPrime = true;
+            for (let i = 2; i <= Math.sqrt(n); i++) {
+                if (n % i === 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+
+            document.getElementById('primo-result').innerText = isPrime 
+                ? `${n} É um número primo!` 
+                : `${n} NÃO é um número primo.`;
+        }
+
+        // 7. Quicksort
+        function calcQuicksort() {
+            const raw = document.getElementById('quicksort-input').value;
+            const nums = raw.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+            if (!nums.length) return alert('Insira números válidos.');
+
+            function quicksort(arr) {
+                if (arr.length <= 1) return arr;
+                const pivot = arr[Math.floor(arr.length / 2)];
+                const left = arr.filter(x => x < pivot);
+                const middle = arr.filter(x => x === pivot);
+                const right = arr.filter(x => x > pivot);
+                return [...quicksort(left), ...middle, ...quicksort(right)];
+            }
+
+            const sorted = quicksort(nums);
+            document.getElementById('quicksort-result').innerText = `Original: [${nums.join(', ')}]\nOrdenado: [${sorted.join(', ')}]`;
+        }
+    </script>
+</body>
+</html>
